@@ -64,6 +64,9 @@ You will need to install the following:
 
 This project addresses the frequent complaints from biciMAD users concerning the **uneven distribution** of bikes among the stations. Throughout the workday, stations near business areas tend to become completely full due to people cycling to work, while stations in residential areas are left empty. This initiative is not only an attempt to resolve user issues but also **aims to enhance the working conditions for the employees involved**.
 
+![workergif](https://github.com/silviluliuma/biciMAD-worker/assets/138609959/2e78b1ff-e210-4ff5-8654-d8eb1033d25d)
+
+
 ## **Things to improve**
 
 In the future, the project will need to consider the **current capacity of the van**. If the van is entirely empty, the app should exclusively search for high-populated stations. If the van has bikes but still has space, the app could search for both high and low-populated stations. However, if the van is completely full, the app should focus solely on low-populated stations. The status of the van should be updated with every interaction, contributing to the continuous optimization of the route.
