@@ -2,3 +2,4 @@ python-dotenv
 folium
 openrouteservice
 geopy
+streamlit_folium
