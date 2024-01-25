@@ -14,6 +14,7 @@ from streamlit_folium import folium_static
 from folium.features import DivIcon
 
 st.write(pd.__version__)
+st.write(st.__version__)
 
 def get_token():
     load_dotenv('../.env')
@@ -32,14 +33,10 @@ def get_stations():
     response = requests.get(url, headers = headers)
     json_data = response.json()
     stations_real_time = pd.DataFrame(json_data["data"])
-    #stations_real_time[["longitude", "latitude"]] = stations_real_time["geometry"].apply(lambda x: pd.Series(x["coordinates"]))
-    stations_real_time2 = stations_real_time.copy()
-    stations_real_time2[["longitude", "latitude"]] = stations_real_time["geometry"].apply(lambda x: pd.Series(x["coordinates"]))
-    #stations_real_time2 = stations_real_time2.drop('coordinates', axis=1)
-    stations_real_time2 = stations_real_time2.drop(["geofence", "activate", "geometry", "integrator", "reservations_count", "no_available", "tipo_estacionPBSC", "virtualDelete", "virtual_bikes", "virtual_bikes_num", "code_suburb", "geofenced_capacity", "bikesGo"], axis=1)
-    stations_real_time2['coordinates'] = list(zip(stations_real_time2['longitude'], stations_real_time2['latitude']))
-    st.dataframe(stations_real_time2)
-    return stations_real_time2
+    stations_real_time[["longitude", "latitude"]] = stations_real_time["geometry"].apply(lambda x: pd.Series(x["coordinates"]))
+    stations_real_time = stations_real_time.drop(["geofence", "activate", "geometry", "integrator", "reservations_count", "no_available", "tipo_estacionPBSC", "virtualDelete", "virtual_bikes", "virtual_bikes_num", "code_suburb", "geofenced_capacity", "bikesGo"], axis=1)
+    stations_real_time['coordinates'] = list(zip(stations_real_time['longitude'], stations_real_time['latitude']))
+    return stations_real_time
 
 def get_district(df, district_number):
     result = df[df["code_district"] == str(district_number)]
