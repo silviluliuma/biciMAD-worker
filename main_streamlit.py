@@ -70,7 +70,7 @@ def number_DivIcon(color,number):
     return icon
 
 def get_route_map(stations_real_time, number_district_sidebar, s_sidebar, van_sidebar):
-    client = st.secrets["openroute_api_key"]
+    client = ors.Client(key = st.secrets["openroute_api_key"])
     #s = input("Is this your initial route? If not, enter your actual coordinates: ")
     if s_sidebar == "Yes":
         vehicle_start = [-3.6823731969472644, 40.46209827032537]
