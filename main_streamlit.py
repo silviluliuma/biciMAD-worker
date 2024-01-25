@@ -13,6 +13,8 @@ import streamlit as st
 from streamlit_folium import folium_static
 from folium.features import DivIcon
 
+st.write(pd.__version__)
+
 def get_token():
     load_dotenv('../.env')
     email = os.environ.get("email")
