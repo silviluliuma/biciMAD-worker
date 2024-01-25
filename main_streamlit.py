@@ -27,11 +27,13 @@ def get_token():
 
 def get_stations():
     load_dotenv('./.env')
-    token = os.environ.get("access_token")
+    #token = os.environ.get("access_token")
+    token = json.loads(get_token().decode('utf-8'))
+    token = token["data"][0]["accessToken"]
+    st.write(token)
     url = "https://openapi.emtmadrid.es/v3/transport/bicimad/stations/"
     headers = {"accessToken" : token}
     response = requests.get(url, headers = headers)
-    st.write(token)
     json_data = response.json()
     stations_real_time = pd.DataFrame(json_data["data"])
     stations_real_time[["longitude", "latitude"]] = stations_real_time["geometry"].apply(lambda x: pd.Series(x["coordinates"]))
