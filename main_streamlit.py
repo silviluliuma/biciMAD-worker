@@ -14,8 +14,8 @@ from streamlit_folium import folium_static
 from folium.features import DivIcon
 
 def get_token():
-    email = st.secrets("email")
-    password = st.secrets("password")
+    email = st.secrets["email"]
+    password = st.secrets["password"]
     st.write(email, password)
     url = "https://openapi.emtmadrid.es/v3/mobilitylabs/user/login/"
     headers = {"email": email, "password" : password}
@@ -24,7 +24,7 @@ def get_token():
 
 def get_stations():
     #token = os.environ.get("access_token")
-    token = st.secrets("access_token")
+    token = st.secrets["access_token"]
     url = "https://openapi.emtmadrid.es/v3/transport/bicimad/stations/"
     headers = {"accessToken" : token}
     response = requests.get(url, headers = headers)
