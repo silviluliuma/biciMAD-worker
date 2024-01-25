@@ -2,7 +2,7 @@
 import requests
 import json
 import os
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 import pandas as pd
 import folium
 import openrouteservice as ors
@@ -13,24 +13,17 @@ import streamlit as st
 from streamlit_folium import folium_static
 from folium.features import DivIcon
 
-st.write(pd.__version__)
-st.write(st.__version__)
-
 def get_token():
-    load_dotenv('../.env')
-    email = os.environ.get("email")
-    password = os.environ.get("password")
+    email = st.secrets("email")
+    password = st.secrets("password")
     url = "https://openapi.emtmadrid.es/v3/mobilitylabs/user/login/"
     headers = {"email": email, "password" : password}
     response = requests.get(url, headers=headers)
     return response.content
 
 def get_stations():
-    load_dotenv('./.env')
     #token = os.environ.get("access_token")
-    token = json.loads(get_token().decode('utf-8'))
-    token = token["data"][0]["accessToken"]
-    st.write(token)
+    token = st.secrets("access_token")
     url = "https://openapi.emtmadrid.es/v3/transport/bicimad/stations/"
     headers = {"accessToken" : token}
     response = requests.get(url, headers = headers)
