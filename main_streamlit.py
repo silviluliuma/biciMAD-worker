@@ -16,6 +16,7 @@ from folium.features import DivIcon
 def get_token():
     email = st.secrets("email")
     password = st.secrets("password")
+    st.write(email, password)
     url = "https://openapi.emtmadrid.es/v3/mobilitylabs/user/login/"
     headers = {"email": email, "password" : password}
     response = requests.get(url, headers=headers)
