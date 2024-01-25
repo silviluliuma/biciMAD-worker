@@ -33,6 +33,7 @@ def get_stations():
     response = requests.get(url, headers = headers)
     json_data = response.json()
     stations_real_time = pd.DataFrame(json_data["data"])
+    print(stations_real_time)
     stations_real_time[["longitude", "latitude"]] = stations_real_time["geometry"].apply(lambda x: pd.Series(x["coordinates"]))
     stations_real_time = stations_real_time.drop(["geofence", "activate", "geometry", "integrator", "reservations_count", "no_available", "tipo_estacionPBSC", "virtualDelete", "virtual_bikes", "virtual_bikes_num", "code_suburb", "geofenced_capacity", "bikesGo"], axis=1)
     stations_real_time['coordinates'] = list(zip(stations_real_time['longitude'], stations_real_time['latitude']))
@@ -152,7 +153,6 @@ def get_route_map(stations_real_time, number_district_sidebar, s_sidebar, van_si
 stations_real_time = get_stations()
 
 if __name__ == "__main__":
-    print(get_stations())
     st.sidebar.title("BiciMAD-worker")
     st.title("Esta es la ruta recomendada para su distrito:")
     number_district_sidebar = st.sidebar.selectbox("¿A qué distrito se le ha asignado hoy?", ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21"], index=0)
