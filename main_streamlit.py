@@ -150,7 +150,6 @@ stations_real_time = get_stations()
 stations_streamlit = stations_real_time[(stations_real_time["light"] == 1) | (stations_real_time["light"] == 0)]
 columns_to_drop = [stations_streamlit.columns[i] for i in [0, 4, 5, 5, 6, 8, 9, 10]]
 stations_streamlit = stations_streamlit.drop(columns_to_drop, axis=1)
-stations_streamlit["coordinates"] == stations_streamlit["coordinates"][1], stations_streamlit["coordinates"][0]
 temp_coordinates = stations_streamlit.loc[0, "coordinates"]
 stations_streamlit.loc[0, "coordinates"] = stations_streamlit.loc[1, "coordinates"]
 stations_streamlit.loc[1, "coordinates"] = temp_coordinates
