@@ -148,6 +148,7 @@ def get_route_map(stations_real_time, number_district_sidebar, s_sidebar, van_si
 stations_real_time = get_stations()
 
 if __name__ == "__main__":
+    st.write(stations_real_time)
     st.sidebar.title("BiciMAD-worker")
     st.title("Esta es la ruta recomendada para su distrito:")
     number_district_sidebar = st.sidebar.selectbox("¿A qué distrito se le ha asignado hoy?", ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21"], index=0)
