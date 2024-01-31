@@ -151,10 +151,10 @@ stations_streamlit = stations_real_time[(stations_real_time["light"] == 1) | (st
 columns_to_drop = [stations_streamlit.columns[i] for i in [0, 4, 5, 6, 8, 9, 10]]
 stations_streamlit = stations_streamlit.drop(columns_to_drop, axis=1)
 
-def swap_coordinates(coordinates):
+"""def swap_coordinates(coordinates):
     lat, lon = coordinates.strip('()').split(', ')
     return f"({lon}, {lat})"
-stations_streamlit["coordinates"] = stations_streamlit["coordinates"].apply(swap_coordinates)
+stations_streamlit["coordinates"] = stations_streamlit["coordinates"].apply(swap_coordinates)"""
 
 if __name__ == "__main__":
     st.sidebar.title("BiciMAD-worker")
