@@ -145,9 +145,6 @@ def get_route_map(stations_real_time, number_district_sidebar, s_sidebar, van_si
 
     return m   
 
-def invert_coordinates(coordinates):
-    lon, lat = coordinates
-    return f"[{lat}, {lon}]"
 
 stations_real_time = get_stations()
 
