@@ -150,7 +150,7 @@ stations_real_time = get_stations()
 stations_streamlit = stations_real_time[(stations_real_time["light"] == 1) | (stations_real_time["light"] == 0)]
 
 def invert_coordinates(coordinates):
-    lon, lat = coordinates.split()
+    lon, lat = coordinates
     return f"{lat} {lon}"
 stations_streamlit["coordinates"] = stations_streamlit["coordinates"].apply(invert_coordinates)
 
