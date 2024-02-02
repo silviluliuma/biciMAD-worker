@@ -145,7 +145,13 @@ def get_route_map(stations_real_time, number_district_sidebar, s_sidebar, van_si
 
     return m   
 
-stations_real_time = get_stations()
+try:
+    stations_real_time = get_stations()
+except:
+    stations_real_time = pd.read_csv("bicimad_stations_backup.csv")
+    stations_real_time[["longitude", "latitude"]] = stations_real_time["geometry"].apply(lambda x: pd.Series(x["coordinates"]))
+    stations_real_time = stations_real_time.drop(["geofence", "activate", "geometry", "integrator", "reservations_count", "no_available", "tipo_estacionPBSC", "virtualDelete", "virtual_bikes", "virtual_bikes_num", "code_suburb", "geofenced_capacity", "bikesGo"], axis=1)
+    stations_real_time['coordinates'] = list(zip(stations_real_time['longitude'], stations_real_time['latitude']))
 
 stations_streamlit = stations_real_time[(stations_real_time["light"] == 1) | (stations_real_time["light"] == 0)]
 
