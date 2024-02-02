@@ -156,7 +156,7 @@ try:
     stations_streamlit = stations_real_time[(stations_real_time["light"] == 1) | (stations_real_time["light"] == 0)]
     stations_streamlit["coordinates"] = stations_streamlit["coordinates"].apply(invert_coordinates)
 except:
-    stations_real_time = pd.read_csv("./notebooks/bicimad_stations_backup.csv")
+    stations_real_time = pd.read_csv("./notebooks/bicimad_backup.csv")
     stations_streamlit = stations_real_time[(stations_real_time["light"] == 1) | (stations_real_time["light"] == 0)]
 
 if __name__ == "__main__":
