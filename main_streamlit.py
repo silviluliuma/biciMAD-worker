@@ -151,7 +151,7 @@ stations_streamlit = stations_real_time[(stations_real_time["light"] == 1) | (st
 
 def invert_coordinates(coordinates):
     lon, lat = coordinates
-    return f"{lat} {lon}"
+    return f"[{lat}, {lon}]"
 stations_streamlit["coordinates"] = stations_streamlit["coordinates"].apply(invert_coordinates)
 
 if __name__ == "__main__":
