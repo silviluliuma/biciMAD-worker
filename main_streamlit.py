@@ -149,15 +149,15 @@ def invert_coordinates(coordinates):
     lon, lat = coordinates
     return f"[{lat}, {lon}]"
 
-#Esta parte es necesaria porque el token de emt caduca y la app no funciona después de un tiempo.
-#Si esto pasa, entra en juego una copia de las estaciones en csv (ya no en tiempo real)
-try:
-    stations_real_time = get_stations()
-    stations_streamlit = stations_real_time[(stations_real_time["light"] == 1) | (stations_real_time["light"] == 0)]
-    stations_streamlit["coordinates"] = stations_streamlit["coordinates"].apply(invert_coordinates)
-except:
-    stations_real_time = pd.read_csv("./notebooks/bicimad_backup.csv")
-    stations_streamlit = stations_real_time[(stations_real_time["light"] == 1) | (stations_real_time["light"] == 0)]
+#Esta parte es necesaria porque el token de la EMT caduca y la app no funciona después de un tiempo.
+#Si esto pasa, entra en juego una copia de las estaciones en csv (ya no en tiempo real).
+#try:
+stations_real_time = get_stations()
+stations_streamlit = stations_real_time[(stations_real_time["light"] == 1) | (stations_real_time["light"] == 0)]
+stations_streamlit["coordinates"] = stations_streamlit["coordinates"].apply(invert_coordinates)
+#except:
+    #stations_real_time = pd.read_csv("./notebooks/bicimad_backup.csv")
+    #stations_streamlit = stations_real_time[(stations_real_time["light"] == 1) | (stations_real_time["light"] == 0)]
 
 if __name__ == "__main__":
     st.sidebar.title("BiciMAD-worker")
