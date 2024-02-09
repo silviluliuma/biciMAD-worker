@@ -107,7 +107,7 @@ def get_route_map(stations_real_time, number_district_sidebar, s_sidebar, van_si
     final_route = create_route(client, coords_list[-1], vehicle_start)
     
     route_url = f"https://www.google.com/maps/dir/{vehicle_start[1]},{vehicle_start[0]}/{coords_list[-1][1]},{coords_list[-1][0]}"
-    
+    st.markdown(f"[Ver ruta en Google Maps]({route_url})")
     webbrowser.open(route_url) 
 
 
@@ -127,7 +127,6 @@ if __name__ == "__main__":
     s_sidebar = st.sidebar.text_input('Si esta es su ruta inicial, introduzca "Yes". En caso contrario, introduzca sus coordenadas entre corchetes ([])', 'Yes')
     van_sidebar = st.sidebar.selectbox("¿Su furgoneta está vacía ('Empty') o llena ('Full')?", ["Empty", "Full"], index=0)
     route_map = get_route_map(stations_real_time, number_district_sidebar, s_sidebar, van_sidebar)
-    st_data = folium_static(route_map)
     st.text("""Instrucciones de reparto BiciMAD-worker: 
     1. Por favor, recoja las bicicletas en las estaciones naranjas.
     2. Descárguelas en las estaciones verdes.
