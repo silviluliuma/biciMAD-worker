@@ -160,9 +160,7 @@ def get_route_map_google(stations_real_time, number_district_sidebar, s_sidebar,
                               popup = [nearest_station[1], nearest_station[0]],
                             icon=folium.Icon(color='darkgreen', icon_color='green')).add_to(m)
                 folium.Marker(location=[nearest_station[1], nearest_station[0]],
-                              icon = number_DivIcon("#12A14B", stop_counter)).add_to(m)
-                m.get_root().html.add_child(folium.Element(legend_html))
-                
+                              icon = number_DivIcon("#12A14B", stop_counter)).add_to(m)    
                 stop_counter += 1
                 folium.PolyLine(locations=[coord[::-1] for coord in route['features'][0]['geometry']['coordinates']],
                                 color='red').add_to(m)
