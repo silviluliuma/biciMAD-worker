@@ -116,7 +116,8 @@ def get_route_map_google(stations_real_time, number_district_sidebar, s_sidebar,
         vehicle_start = [-3.6823731969472644, 40.46209827032537]
     else:
         vehicle_start = [eval(s_sidebar)[1], eval(s_sidebar)[0]]
-    
+    m = folium.Map(location=[vehicle_start[1], vehicle_start[0]], zoom_start=12)
+    folium.Marker(location=[vehicle_start[1], vehicle_start[0]], popup='INICIO DE LA RUTA', icon=folium.Icon(color='purple')).add_to(m)
     distrito_low = get_light0(get_district(stations_real_time, number_district_sidebar)).copy()
     distrito_high = get_light1(get_district(stations_real_time, number_district_sidebar)).copy()
     distrito_low["visited"] = False
