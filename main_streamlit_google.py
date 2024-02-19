@@ -146,10 +146,10 @@ def get_route_map_google(stations_real_time, number_district_sidebar, s_sidebar,
     
     vehicle_start = [-3.6823731969472644, 40.46209827032537]
     final_route = create_route(client, coords_list[-1], vehicle_start)
-    waypoints = "|".join([f"{coord[1]},{coord[0]}" for coord in coords_list])
+    waypoints_list = [f"{coord[1]},{coord[0]}" if isinstance(coord, tuple) else f"{coord[1]},{coord[0]}" for coord in coords_list[1:-1]]
+    waypoints = "|".join(waypoints_list)
     route_url = f"https://www.google.com/maps/dir/?api=1&origin={vehicle_start[1]},{vehicle_start[0]}&destination={coords_list[-1]}&waypoints={waypoints}"
     st.markdown(f"[Ver ruta en Google Maps]({route_url})")
-
 
 stations_real_time = get_stations()
 
