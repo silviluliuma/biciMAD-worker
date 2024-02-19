@@ -134,6 +134,17 @@ def get_route_map_google(stations_real_time, number_district_sidebar, s_sidebar,
                 coords_list.append(nearest_station)
                 distrito_high.loc[distrito_high['coordinates'] == nearest_station, 'visited'] = True
                 distrito_high.loc[distrito_high['coordinates'] == nearest_station, 'light'] = 2
+                route = create_route(client, coords_list[-2], coords_list[-1])
+                folium.Marker(
+                                location=[nearest_station[1], nearest_station[0]],
+                                popup = [nearest_station[1], nearest_station[0]],
+                                icon=folium.Icon(color='orange',icon_color='orange'),
+                            ).add_to(m)
+                folium.Marker(location=[nearest_station[1], nearest_station[0]],
+                            icon= number_DivIcon("#C55A11", stop_counter)).add_to(m)
+    
+                folium.PolyLine(locations=[coord[::-1] for coord in route['features'][0]['geometry']['coordinates']],
+                                color='red').add_to(m)
                 van_sidebar = "Full"
                 stop_counter += 1
         elif van_sidebar == "Full":
@@ -143,20 +154,30 @@ def get_route_map_google(stations_real_time, number_district_sidebar, s_sidebar,
                 coords_list.append(nearest_station)
                 distrito_low.loc[distrito_low['coordinates'] == nearest_station, 'visited'] = True
                 distrito_low.loc[distrito_low['coordinates'] == nearest_station, 'light'] = 2
+                route = create_route(client, coords_list[-2], coords_list[-1])
                 van_sidebar = "Empty"
+                folium.Marker(location=[nearest_station[1], nearest_station[0]],
+                              popup = [nearest_station[1], nearest_station[0]],
+                            icon=folium.Icon(color='darkgreen', icon_color='green')).add_to(m)
+                folium.Marker(location=[nearest_station[1], nearest_station[0]],
+                              icon = number_DivIcon("#12A14B", stop_counter)).add_to(m)
+                m.get_root().html.add_child(folium.Element(legend_html))
+                
                 stop_counter += 1
+                folium.PolyLine(locations=[coord[::-1] for coord in route['features'][0]['geometry']['coordinates']],
+                                color='red').add_to(m)
     
     vehicle_start = [-3.6823731969472644, 40.46209827032537]
     final_route = create_route(client, coords_list[-1], vehicle_start)
     folium.Marker(location=[vehicle_start[1], vehicle_start[0]], popup='CENTRAL EMT', icon=folium.Icon(color='purple')).add_to(m)
     folium.PolyLine(locations=[coord[::-1] for coord in final_route['features'][0]['geometry']['coordinates']],
-                                color='red').add_to(m)
+                                color='red').add_to(m) 
+    return m
     waypoints_list = [f"{coord[1]},{coord[0]}" if isinstance(coord, tuple) else f"{coord[1]},{coord[0]}" for coord in coords_list[1:-1]]
     waypoints = "|".join(waypoints_list)
     destination_coords = f"{coords_list[-1][1]},{coords_list[-1][0]}"
     route_url = f"https://www.google.com/maps/dir/?api=1&origin={vehicle_start[1]},{vehicle_start[0]}&destination={destination_coords}&waypoints={waypoints}"
     st.markdown(f"[Ver ruta en Google Maps]({route_url})")
-    return m
 stations_real_time = get_stations()
 
 stations_streamlit = stations_real_time[(stations_real_time["light"] == 1) | (stations_real_time["light"] == 0)]
