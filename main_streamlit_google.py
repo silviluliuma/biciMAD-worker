@@ -120,7 +120,7 @@ def get_route_map(stations_real_time, number_district_sidebar, s_sidebar, van_si
 user_coordinates = get_user_location()"""
 
 def get_user_location():
-    js_code = 
+    js_code="""
     <script>
     if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(function(position) {
@@ -130,7 +130,7 @@ def get_user_location():
     } else {
         alert("Geolocation is not supported by this browser.");
     }
-    </script>
+    </script>"""
 
     components.html(js_code)
 
