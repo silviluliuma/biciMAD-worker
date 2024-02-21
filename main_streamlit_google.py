@@ -119,7 +119,7 @@ def get_user_location(): #Función para obtener la localización actual del usua
     except Exception as e:
         print("Error getting user location:", e)
         return None, None
-user_coordinates = get_user_location()
+user_coordinates = f"{get_user_location()}"
 
 def get_route_map_google(stations_real_time, number_district_sidebar, s_sidebar, van_sidebar):
     client = ors.Client(key=st.secrets["openroute_api_key"])
