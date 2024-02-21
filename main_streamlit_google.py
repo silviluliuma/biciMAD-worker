@@ -111,13 +111,13 @@ def get_route_map(stations_real_time, number_district_sidebar, s_sidebar, van_si
     route_url = f"https://www.google.com/maps/dir/?api=1&origin={vehicle_start[1]},{vehicle_start[0]}&destination={coords_list[-1]}&waypoints={waypoints}"
     st.markdown(f"[Ver ruta en Google Maps]({route_url})")
 
-"""def get_user_location():
-    key = st.secrets["api_location_key"]
-    response = requests.get("https://api.ipgeolocation.io/ipgeo?apiKey=" + key)
-    user_coords = float(response.json()["latitude"]), float(response.json()["longitude"])
-    return user_coords
+#def get_user_location():
+    #key = st.secrets["api_location_key"]
+    #response = requests.get("https://api.ipgeolocation.io/ipgeo?apiKey=" + key)
+    #user_coords = float(response.json()["latitude"]), float(response.json()["longitude"])
+    #return user_coords
 
-user_coordinates = get_user_location()"""
+#user_coordinates = get_user_location()
 
 def get_user_location():
     js_code= """
