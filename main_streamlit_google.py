@@ -120,7 +120,7 @@ def get_route_map(stations_real_time, number_district_sidebar, s_sidebar, van_si
 user_coordinates = get_user_location()"""
 
 def get_user_location():
-    js_code="""
+    js_code= """
     <script>
     if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(function(position) {
@@ -135,12 +135,7 @@ def get_user_location():
     components.html(js_code)
 
     user_location = st.session_state.get("user_location")
-
-    if user_location:
-        return user_location
-        st.write("Ubicación del usuario:", user_location)
-    else:
-        st.write("No se ha podido acceder a la ubicación del dispositivo")
+    return user_location
 
 user_coordinates = get_user_location()
 
