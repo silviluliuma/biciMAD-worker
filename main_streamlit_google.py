@@ -110,13 +110,13 @@ def get_route_map(stations_real_time, number_district_sidebar, s_sidebar, van_si
     route_url = f"https://www.google.com/maps/dir/?api=1&origin={vehicle_start[1]},{vehicle_start[0]}&destination={coords_list[-1]}&waypoints={waypoints}"
     st.markdown(f"[Ver ruta en Google Maps]({route_url})")
 
-def get_user_location():
+"""def get_user_location():
     key = st.secrets["api_location_key"]
     response = requests.get("https://api.ipgeolocation.io/ipgeo?apiKey=" + key)
     user_coords = float(response.json()["latitude"]), float(response.json()["longitude"])
     return user_coords
 
-user_coordinates = get_user_location()
+user_coordinates = get_user_location()"""
 
 def get_route_map_google(stations_real_time, number_district_sidebar, s_sidebar, van_sidebar):
     client = ors.Client(key=st.secrets["openroute_api_key"])
@@ -181,8 +181,8 @@ def get_route_map_google(stations_real_time, number_district_sidebar, s_sidebar,
     waypoints_list = [f"{coord[1]},{coord[0]}" if isinstance(coord, tuple) else f"{coord[1]},{coord[0]}" for coord in coords_list[1:-1]]
     waypoints = "|".join(waypoints_list)
     destination_coords = f"{coords_list[-1][1]},{coords_list[-1][0]}"
-    route_url = f"https://www.google.com/maps/dir/?api=1&origin={user_coordinates[0]},{user_coordinates[1]}&destination={destination_coords}&waypoints={waypoints}"
-    #route_url = f"https://www.google.com/maps/dir/?api=1&origin={vehicle_start[1]},{vehicle_start[0]}&destination={destination_coords}&waypoints={waypoints}"
+    #route_url = f"https://www.google.com/maps/dir/?api=1&origin={user_coordinates[0]},{user_coordinates[1]}&destination={destination_coords}&waypoints={waypoints}"
+    route_url = f"https://www.google.com/maps/dir/?api=1&origin={vehicle_start[1]},{vehicle_start[0]}&destination={destination_coords}&waypoints={waypoints}"
     st.markdown(f"[Ver ruta en Google Maps]({route_url})")
 stations_real_time = get_stations()
 
