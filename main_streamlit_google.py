@@ -11,6 +11,7 @@ from streamlit_folium import folium_static
 from folium.features import DivIcon
 import webbrowser
 from dotenv import load_dotenv
+import geocoder
 
 def get_token():
     email = st.secrets["email"]
@@ -110,6 +111,16 @@ def get_route_map(stations_real_time, number_district_sidebar, s_sidebar, van_si
     route_url = f"https://www.google.com/maps/dir/?api=1&origin={vehicle_start[1]},{vehicle_start[0]}&destination={coords_list[-1]}&waypoints={waypoints}"
     st.markdown(f"[Ver ruta en Google Maps]({route_url})")
 
+def get_user_location(): #Función para obtener la localización actual del usuario
+    try:
+        location = geocoder.ip('me')
+        latitude, longitude = location.latlng
+        return latitude, longitude
+    except Exception as e:
+        print("Error getting user location:", e)
+        return None, None
+user_coordinates = get_user_location()
+
 def get_route_map_google(stations_real_time, number_district_sidebar, s_sidebar, van_sidebar):
     client = ors.Client(key=st.secrets["openroute_api_key"])
     if s_sidebar == "Yes":
@@ -173,9 +184,8 @@ def get_route_map_google(stations_real_time, number_district_sidebar, s_sidebar,
     waypoints_list = [f"{coord[1]},{coord[0]}" if isinstance(coord, tuple) else f"{coord[1]},{coord[0]}" for coord in coords_list[1:-1]]
     waypoints = "|".join(waypoints_list)
     destination_coords = f"{coords_list[-1][1]},{coords_list[-1][0]}"
-    route_url = f"https://www.google.com/maps/dir/?api=1&origin={vehicle_start[1]},{vehicle_start[0]}&destination={destination_coords}&waypoints={waypoints}"
+    route_url = f"https://www.google.com/maps/dir/?api=1&origin={user_coordinates}&destination={destination_coords}&waypoints={waypoints}"
     st.markdown(f"[Ver ruta en Google Maps]({route_url})")
-    return m
 stations_real_time = get_stations()
 
 stations_streamlit = stations_real_time[(stations_real_time["light"] == 1) | (stations_real_time["light"] == 0)]
