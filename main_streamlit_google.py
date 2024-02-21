@@ -11,7 +11,6 @@ from streamlit_folium import folium_static
 from folium.features import DivIcon
 import webbrowser
 from dotenv import load_dotenv
-import geocoder
 
 def get_token():
     email = st.secrets["email"]
@@ -111,15 +110,13 @@ def get_route_map(stations_real_time, number_district_sidebar, s_sidebar, van_si
     route_url = f"https://www.google.com/maps/dir/?api=1&origin={vehicle_start[1]},{vehicle_start[0]}&destination={coords_list[-1]}&waypoints={waypoints}"
     st.markdown(f"[Ver ruta en Google Maps]({route_url})")
 
-def get_user_location(): #Función para obtener la localización actual del usuario
-    try:
-        location = geocoder.ip('me')
-        latitude, longitude = location.latlng
-        return latitude, longitude
-    except Exception as e:
-        print("Error getting user location:", e)
-        return None, None
-user_coordinates = f"{get_user_location()}"
+def get_user_location():
+    key = st.secrets["api_location_key"]
+    response = requests.get("https://api.ipgeolocation.io/ipgeo?apiKey=" + key)
+    user_coords = response.json()["latitude"], response.json()["longitude"]
+    return user_coords
+
+user_coordinates = get_user_location()
 
 def get_route_map_google(stations_real_time, number_district_sidebar, s_sidebar, van_sidebar):
     client = ors.Client(key=st.secrets["openroute_api_key"])
