@@ -137,7 +137,7 @@ def get_user_location():
     user_location = st.session_state.get("user_location")
     return user_location
 
-user_coordinates = [get_user_location()]
+user_coordinates = [get_user_location()[0], get_user_location()[1]]
 
 def get_route_map_google(stations_real_time, number_district_sidebar, s_sidebar, van_sidebar):
     client = ors.Client(key=st.secrets["openroute_api_key"])
