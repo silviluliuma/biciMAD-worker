@@ -12,6 +12,9 @@ from folium.features import DivIcon
 import webbrowser
 from dotenv import load_dotenv
 import streamlit.components.v1 as components
+from bokeh.models.widgets import Button
+from bokeh.models import CustomJS
+from streamlit_bokeh_events import streamlit_bokeh_events
 
 def get_token():
     email = st.secrets["email"]
@@ -68,6 +71,27 @@ def number_DivIcon(color,number):
     <strong class="fa-stack-1x" style="line-height: 36px; color: black; position: absolute; width: 100%; text-align: center;">{:02d}</strong>
 </span>""".format(color, number))
     return icon
+
+
+loc_button = Button(label="Get Location")
+loc_button.js_on_event("button_click", CustomJS(code="""
+    navigator.geolocation.getCurrentPosition(
+        (loc) => {
+            document.dispatchEvent(new CustomEvent("GET_LOCATION", {detail: {lat: loc.coords.latitude, lon: loc.coords.longitude}}))
+        }
+    )
+    """))
+result = streamlit_bokeh_events(
+    loc_button,
+    events="GET_LOCATION",
+    key="get_location",
+    refresh_on_update=False,
+    override_height=75,
+    debounce_time=0)
+if result:
+    if "GET_LOCATION" in result:
+        st.write(result.get("GET_LOCATION"))
+
 
 def get_route_map(stations_real_time, number_district_sidebar, s_sidebar, van_sidebar):
     client = ors.Client(key=st.secrets["openroute_api_key"])
