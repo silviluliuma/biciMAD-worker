@@ -138,7 +138,7 @@ def get_user_location():
     else:
         return None
     
-user_coordinates = get_user_location()
+user_coordinates = get_user_location().json()
 
 loc = [get_geolocation()["latitude"], get_geolocation["longitude"]]
 
