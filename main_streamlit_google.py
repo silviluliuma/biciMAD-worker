@@ -221,7 +221,7 @@ stations_streamlit["coordinates"] = stations_streamlit["coordinates"].apply(inve
 
 if __name__ == "__main__":
     st.sidebar.title("BiciMAD-worker")
-    st.write(loc)
+    st.write(user_coordinates)
     st.title("Esta es la ruta recomendada para su distrito:")
     number_district_sidebar = st.sidebar.selectbox("¿A qué distrito se le ha asignado hoy?", ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21"], index=0)
     s_sidebar = st.sidebar.text_input('Si esta es su ruta inicial, introduzca "Yes". En caso contrario, introduzca sus coordenadas entre corchetes ([])', 'Yes')
