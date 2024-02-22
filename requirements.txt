@@ -7,3 +7,4 @@ pandas==2.1.1
 requests==2.31.0
 streamlit 
 streamlit-bokeh-events
+streamlit_js_eval
