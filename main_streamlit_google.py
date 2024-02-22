@@ -138,9 +138,9 @@ def get_user_location():
     else:
         return None
     
-user_coordinates = get_user_location().json()
+user_coordinates = get_user_location()
 
-loc = [get_geolocation()["latitude"], get_geolocation["longitude"]]
+loc = [get_geolocation().json["latitude"], get_geolocation().json["longitude"]]
 
 def get_route_map_google(stations_real_time, number_district_sidebar, s_sidebar, van_sidebar):
     client = ors.Client(key=st.secrets["openroute_api_key"])
