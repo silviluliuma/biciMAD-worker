@@ -199,14 +199,13 @@ def get_route_map_google(stations_real_time, number_district_sidebar, s_sidebar,
     folium.Marker(location=[vehicle_start[1], vehicle_start[0]], popup='CENTRAL EMT', icon=folium.Icon(color='purple')).add_to(m)
     folium.PolyLine(locations=[coord[::-1] for coord in final_route['features'][0]['geometry']['coordinates']],
                                 color='red').add_to(m) 
+    return m
     waypoints_list = [f"{coord[1]},{coord[0]}" if isinstance(coord, tuple) else f"{coord[1]},{coord[0]}" for coord in coords_list[1:-1]]
     waypoints = "|".join(waypoints_list)
     destination_coords = f"{coords_list[-1][1]},{coords_list[-1][0]}"
-    #route_url = f"https://www.google.com/maps/dir/?api=1&origin={user_coordinates[0]},{user_coordinates[1]}&destination={destination_coords}&waypoints={waypoints}"
-    #route_url = f"https://www.google.com/maps/dir/?api=1&origin={user_coordinates[0]},{user_coordinates[1]}&destination={destination_coords}&waypoints={waypoints}"
     route_url = f"https://www.google.com/maps/dir/?api=1&origin={vehicle_start[1]},{vehicle_start[0]}&destination={destination_coords}&waypoints={waypoints}"
     st.markdown(f"[Ver ruta en Google Maps]({route_url})")
-    return m
+    
 stations_real_time = get_stations()
 
 stations_streamlit = stations_real_time[(stations_real_time["light"] == 1) | (stations_real_time["light"] == 0)]
@@ -222,7 +221,7 @@ if __name__ == "__main__":
     number_district_sidebar = st.sidebar.selectbox("¿A qué distrito se le ha asignado hoy?", ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21"], index=0)
     s_sidebar = st.sidebar.text_input('Si esta es su ruta inicial, introduzca "Yes". En caso contrario, introduzca sus coordenadas entre corchetes ([])', 'Yes')
     van_sidebar = st.sidebar.selectbox("¿Su furgoneta está vacía ('Empty') o llena ('Full')?", ["Empty", "Full"], index=0)
-    route_map = get_route_map(stations_real_time, number_district_sidebar, s_sidebar, van_sidebar)
+    route_map = get_route_map_google(stations_real_time, number_district_sidebar, s_sidebar, van_sidebar)
     st_data = folium_static(route_map)
     st.text("""Instrucciones de reparto BiciMAD-worker: 
     1. Por favor, recoja las bicicletas en las estaciones naranjas.
