@@ -12,9 +12,8 @@ from folium.features import DivIcon
 import webbrowser
 from dotenv import load_dotenv
 import streamlit.components.v1 as components
-from bokeh.models.widgets import Button
-from bokeh.models import CustomJS
 from streamlit_bokeh_events import streamlit_bokeh_events
+from bokeh.models import Button, CustomJS
 
 def get_token():
     email = st.secrets["email"]
@@ -132,9 +131,11 @@ def get_user_location():
         refresh_on_update=False,
         override_height=75,
         debounce_time=0)
-    if result:
-        user_location = result.get("GET_LOCATION")
+    if result and "GET_LOCATION" in result:
+        user_location = result["GET_LOCATION"]
         return [user_location['lon'], user_location['lat']]
+    else:
+        return None
     
 user_coordinates = get_user_location()
 
