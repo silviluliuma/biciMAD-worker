@@ -140,7 +140,7 @@ def get_user_location():
     
 user_coordinates = get_user_location()
 
-loc = [get_geolocation()["latitude"], get_geolocation["longitude"]]
+loc = [get_geolocation()["coords"]["latitude"], get_geolocation["coords"]["longitude"]]
 
 def get_route_map_google(stations_real_time, number_district_sidebar, s_sidebar, van_sidebar):
     client = ors.Client(key=st.secrets["openroute_api_key"])
