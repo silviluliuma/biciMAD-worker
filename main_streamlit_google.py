@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 import streamlit.components.v1 as components
 from streamlit_bokeh_events import streamlit_bokeh_events
 from bokeh.models import Button, CustomJS
+from streamlit_js_eval import get_geolocation
 
 def get_token():
     email = st.secrets["email"]
@@ -139,6 +140,8 @@ def get_user_location():
     
 user_coordinates = get_user_location()
 
+loc = get_geolocation()
+
 def get_route_map_google(stations_real_time, number_district_sidebar, s_sidebar, van_sidebar):
     client = ors.Client(key=st.secrets["openroute_api_key"])
     if s_sidebar == "Yes":
@@ -202,8 +205,8 @@ def get_route_map_google(stations_real_time, number_district_sidebar, s_sidebar,
     waypoints_list = [f"{coord[1]},{coord[0]}" if isinstance(coord, tuple) else f"{coord[1]},{coord[0]}" for coord in coords_list[1:-1]]
     waypoints = "|".join(waypoints_list)
     destination_coords = f"{coords_list[-1][1]},{coords_list[-1][0]}"
-    #route_url = f"https://www.google.com/maps/dir/?api=1&origin={vehicle_start[1]},{vehicle_start[0]}&destination={destination_coords}&waypoints={waypoints}"
-    route_url = f"https://www.google.com/maps/dir/?api=1&origin={user_coordinates[0]},{user_coordinates[1]}&destination={destination_coords}&waypoints={waypoints}"
+    route_url = f"https://www.google.com/maps/dir/?api=1&origin={vehicle_start[1]},{vehicle_start[0]}&destination={destination_coords}&waypoints={waypoints}"
+    #route_url = f"https://www.google.com/maps/dir/?api=1&origin={user_coordinates[0]},{user_coordinates[1]}&destination={destination_coords}&waypoints={waypoints}"
     st.markdown(f"[Ver ruta en Google Maps]({route_url})")
     return m
 
@@ -218,6 +221,7 @@ stations_streamlit["coordinates"] = stations_streamlit["coordinates"].apply(inve
 
 if __name__ == "__main__":
     st.sidebar.title("BiciMAD-worker")
+    st.write(loc)
     st.title("Esta es la ruta recomendada para su distrito:")
     number_district_sidebar = st.sidebar.selectbox("¿A qué distrito se le ha asignado hoy?", ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21"], index=0)
     s_sidebar = st.sidebar.text_input('Si esta es su ruta inicial, introduzca "Yes". En caso contrario, introduzca sus coordenadas entre corchetes ([])', 'Yes')
