@@ -69,7 +69,7 @@ def number_DivIcon(color,number): #Crea iconos numerados para las paradas que ti
 </span>""".format(color, number))
     return icon
 
-"""
+
 def get_route_map(stations_real_time, number_district_sidebar, s_sidebar, van_sidebar): #Crea la ruta en un mapa folium
     client = ors.Client(key=st.secrets["openroute_api_key"])
     if s_sidebar == "Yes":
@@ -110,7 +110,7 @@ def get_route_map(stations_real_time, number_district_sidebar, s_sidebar, van_si
     final_route = create_route(client, coords_list[-1], vehicle_start)
     waypoints = "|".join([f"{coord[1]},{coord[0]}" for coord in coords_list])
     route_url = f"https://www.google.com/maps/dir/?api=1&origin={vehicle_start[1]},{vehicle_start[0]}&destination={coords_list[-1]}&waypoints={waypoints}"
-    st.markdown(f"[Ver ruta en Google Maps]({route_url})")"""
+    st.markdown(f"[Ver ruta en Google Maps]({route_url})")
 
 loc = get_geolocation() #Con un componente de streamlit, detecta la ubicación actual del usuario
 user_coordinates = [loc["coords"]["latitude"], loc["coords"]["longitude"]] 
@@ -178,9 +178,10 @@ def get_route_map_google(stations_real_time, number_district_sidebar, van_sideba
     st.markdown(f"[Ver ruta en Google Maps]({route_url})")
     return m
 
-stations_real_time = get_stations()
+if "stations_real_time" not in st.session_state:
+    st.session_state.stations_real_time = get_stations()
 
-stations_streamlit = stations_real_time[(stations_real_time["light"] == 1) | (stations_real_time["light"] == 0)] #Selecciona sólo las estaciones que nos interesan (las que tienen déficit o superávit) para mostrarlas en streamlit
+stations_streamlit = st.session_state.stations_real_time[(st.session_state.stations_real_time["light"] == 1) | (st.session_state.stations_real_time["light"] == 0)] #Selecciona sólo las estaciones que nos interesan (las que tienen déficit o superávit) para mostrarlas en streamlit
 
 def invert_coordinates(coordinates): #Invierte las coordenadas necesarias (openrouteservice y google maps toman en diferente posición la latitud y la longitud)
     lon, lat = coordinates
@@ -192,7 +193,7 @@ if __name__ == "__main__":
     st.title("Esta es la ruta recomendada para su distrito:")
     number_district_sidebar = st.sidebar.selectbox("¿A qué distrito se le ha asignado hoy?", ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21"], index=0)
     van_sidebar = st.sidebar.selectbox("¿Su furgoneta está vacía ('Empty') o llena ('Full')?", ["Empty", "Full"], index=0)
-    route_map = get_route_map_google(stations_real_time, number_district_sidebar, van_sidebar)
+    route_map = get_route_map_google(st.session_state.stations_real_time, number_district_sidebar, van_sidebar)
     st_data = folium_static(route_map)
     st.text("""Instrucciones de reparto BiciMAD-worker: 
     1. Por favor, recoja las bicicletas en las estaciones naranjas.
