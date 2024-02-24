@@ -69,7 +69,7 @@ def number_DivIcon(color,number): #Crea iconos numerados para las paradas que ti
 </span>""".format(color, number))
     return icon
 
-
+"""
 def get_route_map(stations_real_time, number_district_sidebar, s_sidebar, van_sidebar): #Crea la ruta en un mapa folium
     client = ors.Client(key=st.secrets["openroute_api_key"])
     if s_sidebar == "Yes":
@@ -110,7 +110,7 @@ def get_route_map(stations_real_time, number_district_sidebar, s_sidebar, van_si
     final_route = create_route(client, coords_list[-1], vehicle_start)
     waypoints = "|".join([f"{coord[1]},{coord[0]}" for coord in coords_list])
     route_url = f"https://www.google.com/maps/dir/?api=1&origin={vehicle_start[1]},{vehicle_start[0]}&destination={coords_list[-1]}&waypoints={waypoints}"
-    st.markdown(f"[Ver ruta en Google Maps]({route_url})")
+    st.markdown(f"[Ver ruta en Google Maps]({route_url})")"""
 
 loc = get_geolocation() #Con un componente de streamlit, detecta la ubicación actual del usuario
 user_coordinates = [loc["coords"]["latitude"], loc["coords"]["longitude"]] 
@@ -170,10 +170,7 @@ def get_route_map_google(stations_real_time, number_district_sidebar, van_sideba
                 folium.PolyLine(locations=[coord[::-1] for coord in route['features'][0]['geometry']['coordinates']],
                                 color='red').add_to(m)
     
-    final_route = create_route(client, coords_list[-1])
     folium.Marker(location=[vehicle_start[1], vehicle_start[0]], popup='UBICACIÓN ACTUAL', icon=folium.Icon(color='purple')).add_to(m)
-    folium.PolyLine(locations=[coord[::-1] for coord in final_route['features'][0]['geometry']['coordinates']],
-                                color='red').add_to(m) 
     waypoints_list = [f"{coord[1]},{coord[0]}" if isinstance(coord, tuple) else f"{coord[1]},{coord[0]}" for coord in coords_list[1:-1]]
     waypoints = "|".join(waypoints_list)
     destination_coords = f"{coords_list[-1][1]},{coords_list[-1][0]}"
