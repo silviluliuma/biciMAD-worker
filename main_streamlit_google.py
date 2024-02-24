@@ -171,7 +171,7 @@ def get_route_map_google(stations_real_time, number_district_sidebar, van_sideba
                                 color='red').add_to(m)
     
     final_route = create_route(client, coords_list[-1], vehicle_start)
-    folium.Marker(location=[vehicle_start[1], vehicle_start[0]], popup='CENTRAL EMT', icon=folium.Icon(color='purple')).add_to(m)
+    folium.Marker(location=[vehicle_start[1], vehicle_start[0]], popup='UBICACIÓN ACTUAL', icon=folium.Icon(color='purple')).add_to(m)
     folium.PolyLine(locations=[coord[::-1] for coord in final_route['features'][0]['geometry']['coordinates']],
                                 color='red').add_to(m) 
     waypoints_list = [f"{coord[1]},{coord[0]}" if isinstance(coord, tuple) else f"{coord[1]},{coord[0]}" for coord in coords_list[1:-1]]
