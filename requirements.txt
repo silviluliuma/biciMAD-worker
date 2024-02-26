@@ -8,3 +8,5 @@ requests==2.31.0
 streamlit 
 streamlit-bokeh-events
 streamlit_js_eval
+matplotlib
+seaborn
