@@ -78,6 +78,12 @@ except:
     st.write("Se está cargando la ubicación. Por favor, espere unos segundos.")
 
 def get_route_map_google(stations_real_time, number_district_sidebar, van_sidebar): #Hace display de la ruta del trabajador tanto en google maps como en un mapa folium
+    try:
+        loc = get_geolocation() #Con un componente de streamlit, detecta la ubicación actual del usuario
+        user_latitude = loc.get("coords").get("latitude")
+        user_longitude = loc.get("coords").get("longitude")
+    except:
+        st.write("Se está cargando la ubicación. Por favor, espere unos segundos.")
     client = ors.Client(key=st.secrets["openroute_api_key"])
     vehicle_start = [user_longitude, user_latitude]
     m = folium.Map(location=[vehicle_start[1], vehicle_start[0]], zoom_start=12)
@@ -139,7 +145,6 @@ def get_route_map_google(stations_real_time, number_district_sidebar, van_sideba
     route_url = f"https://www.google.com/maps/dir/?api=1&origin={user_latitude},{user_longitude}&destination={destination_coords}&waypoints={waypoints}"
     st.markdown(f"[Ver ruta en Google Maps]({route_url})")
     return m
-
 
 if "stations_real_time" not in st.session_state:
     st.session_state.stations_real_time = get_stations()

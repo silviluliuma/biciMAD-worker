@@ -43,14 +43,13 @@ stations_real_time = get_stations()
 def get_problematic_stations():
     lights_df_sum = stations_real_time.pivot_table(index='code_district', columns='light', aggfunc='size', fill_value=0)
     lights_df_sum = lights_df_sum.drop([2, 3], axis=1)
-    lights_df_sum["Total"] = lights_df_sum[0] +lights_df_sum[1]
+    lights_df_sum["problematic_stations"] = lights_df_sum[0] +lights_df_sum[1]
     lights_df_sum_sorted = lights_df_sum.sort_values(by="problematic_stations", ascending=False)
     return lights_df_sum_sorted
 
 def get_heatmap():
     plt.figure(figsize=(10, 6))
-    custom_palette = sns.light_palette("orange", as_cmap=True)
-    sns.heatmap(get_problematic_stations(), cmap=custom_palette, annot=True, fmt='g', linewidths=.5)
+    sns.heatmap(get_problematic_stations(), cmap='YlGnBu', annot=True, fmt='g', linewidths=.5)
     plt.title('Estaciones problemáticas por distrito')
     plt.xlabel('Luz')
     plt.ylabel('Distrito')
