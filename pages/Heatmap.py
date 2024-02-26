@@ -51,7 +51,7 @@ def get_heatmap():
     plt.title('Estaciones problemáticas por distrito')
     plt.xlabel('Luz')
     plt.ylabel('Distrito')
-    plt.show()
+    st.pyplot()
 
 get_heatmap()
 
