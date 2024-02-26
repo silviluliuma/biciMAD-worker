@@ -74,11 +74,10 @@ loc = get_geolocation() #Con un componente de streamlit, detecta la ubicación a
 user_coordinates = [loc["coords"]["latitude"], loc["coords"]["longitude"]]
 user_latitude = user_coordinates[0] 
 user_longitude = user_coordinates[1]
-st.write(user_latitude, user_longitude)
 
 def get_route_map_google(stations_real_time, number_district_sidebar, van_sidebar): #Hace display de la ruta del trabajador tanto en google maps como en un mapa folium
     client = ors.Client(key=st.secrets["openroute_api_key"])
-    vehicle_start = [user_coordinates[1], user_coordinates[0]]
+    vehicle_start = [user_longitude, user_latitude]
     m = folium.Map(location=[vehicle_start[1], vehicle_start[0]], zoom_start=12)
     folium.Marker(location=[vehicle_start[1], vehicle_start[0]], popup='INICIO DE LA RUTA', icon=folium.Icon(color='purple')).add_to(m)
     
@@ -135,7 +134,7 @@ def get_route_map_google(stations_real_time, number_district_sidebar, van_sideba
     waypoints_list = [f"{coord[1]},{coord[0]}" if isinstance(coord, tuple) else f"{coord[1]},{coord[0]}" for coord in coords_list[1:-1]]
     waypoints = "|".join(waypoints_list)
     destination_coords = f"{coords_list[-1][1]},{coords_list[-1][0]}"
-    route_url = f"https://www.google.com/maps/dir/?api=1&origin={user_coordinates[0]},{user_coordinates[1]}&destination={destination_coords}&waypoints={waypoints}"
+    route_url = f"https://www.google.com/maps/dir/?api=1&origin={user_latitude},{user_longitude}&destination={destination_coords}&waypoints={waypoints}"
     st.markdown(f"[Ver ruta en Google Maps]({route_url})")
     return m
 
