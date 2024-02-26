@@ -71,6 +71,7 @@ def number_DivIcon(color,number): #Crea iconos numerados para las paradas que ti
     return icon
 
 loc = get_geolocation() #Con un componente de streamlit, detecta la ubicación actual del usuario
+st.write(loc)
 user_coordinates = [loc["coords"]["latitude"], loc["coords"]["longitude"]]
 user_latitude = user_coordinates[0] 
 user_longitude = user_coordinates[1]
