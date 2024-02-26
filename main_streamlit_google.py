@@ -136,9 +136,6 @@ def get_route_map_google(stations_real_time, number_district_sidebar, van_sideba
     st.markdown(f"[Ver ruta en Google Maps]({route_url})")
     return m
 
-if "stations_real_time" not in st.session_state: #Sólo se ejecuta la primera vez, el resto del tiempo accede al caché
-    st.session_state.stations_real_time = get_stations()
-
 stations_streamlit = st.session_state.stations_real_time[(st.session_state.stations_real_time["light"] == 1) | (st.session_state.stations_real_time["light"] == 0)] #Selecciona sólo las estaciones que nos interesan (las que tienen déficit o superávit) para mostrarlas en streamlit
 
 def invert_coordinates(coordinates): #Invierte las coordenadas necesarias (openrouteservice y google maps toman en diferente posición la latitud y la longitud)
@@ -162,10 +159,15 @@ def get_heatmap():
     plt.show()
 
 if __name__ == "__main__":
+    st.sidebar.button("Refresh")
     st.sidebar.title("BiciMAD-worker")
     st.title("Esta es la ruta recomendada para su distrito:")
     number_district_sidebar = st.sidebar.selectbox("Distritos con necesidad de redistribución", get_problematic_stations().index.tolist(), index=0)
     van_sidebar = st.sidebar.selectbox("¿Su furgoneta está vacía ('Empty') o llena ('Full')?", ["Empty", "Full"], index=0)
+    if st.sidebar.button("Refresh"):
+        st.session_state.stations_real_time = get_stations()
+    if "stations_real_time" not in st.session_state:
+        st.session_state.stations_real_time = get_stations()
     route_map = get_route_map_google(st.session_state.stations_real_time, number_district_sidebar, van_sidebar)
     st_data = folium_static(route_map)
     st.text("""Instrucciones de reparto BiciMAD-worker: 
@@ -175,5 +177,4 @@ if __name__ == "__main__":
     4. Conduzca con cuidado y que tenga un buen turno.""")
     st.write("Estas son las estaciones a visitar:")
     st.write(get_district(stations_streamlit, number_district_sidebar)["address"])
-    if st.button('Refresh'):
-        st.experimental_rerun()
+    
