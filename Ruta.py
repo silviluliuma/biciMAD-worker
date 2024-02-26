@@ -12,7 +12,7 @@ from folium.features import DivIcon
 from streamlit_js_eval import get_geolocation
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+import time
 #Funciones
 
 def get_token(): #Coger el token de la api de bicimad
@@ -72,6 +72,7 @@ def number_DivIcon(color,number): #Crea iconos numerados para las paradas que ti
 
 
 loc = get_geolocation() #Con un componente de streamlit, detecta la ubicación actual del usuario
+time.sleep(3)
 user_latitude = loc.get("coords").get("latitude")
 user_longitude = loc.get("coords").get("longitude")
 
