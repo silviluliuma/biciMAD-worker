@@ -161,9 +161,9 @@ def get_heatmap():
 if __name__ == "__main__":
     st.sidebar.title("BiciMAD-worker")
     st.title("Esta es la ruta recomendada para su distrito:")
-    number_district_sidebar = st.sidebar.selectbox("Distritos con necesidad de redistribución", get_problematic_stations().index.tolist(), index=0)
+    number_district_sidebar = st.sidebar.selectbox("Seleccione uno de los distritos con necesidad de redistribución", get_problematic_stations().index.tolist(), index=0)
     van_sidebar = st.sidebar.selectbox("¿Su furgoneta está vacía ('Empty') o llena ('Full')?", ["Empty", "Full"], index=0)
-    if st.sidebar.button("Refresh"):
+    if st.sidebar.button("Actualizar datos"):
         st.session_state.stations_real_time = get_stations()
     if "stations_real_time" not in st.session_state:
         st.session_state.stations_real_time = get_stations()
