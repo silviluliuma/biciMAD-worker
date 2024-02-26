@@ -175,3 +175,5 @@ if __name__ == "__main__":
     4. Conduzca con cuidado y que tenga un buen turno.""")
     st.write("Estas son las estaciones a visitar:")
     st.write(get_district(stations_streamlit, number_district_sidebar)["address"])
+    if st.button('Refresh'):
+        st.experimental_rerun()
