@@ -10,6 +10,8 @@ import streamlit as st
 from streamlit_folium import folium_static
 from folium.features import DivIcon
 from streamlit_js_eval import get_geolocation
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 #Funciones
 
@@ -23,7 +25,6 @@ def get_token(): #Coger el token de la api de bicimad
     return response.content
 
 def get_stations(): #Usar el token para acceder a la información en tiempo real sobre las estaciones
-    #token = os.environ.get("access_token")
     token = st.secrets["access_token"]
     url = "https://openapi.emtmadrid.es/v3/transport/bicimad/stations/"
     headers = {"accessToken" : token}
@@ -68,49 +69,6 @@ def number_DivIcon(color,number): #Crea iconos numerados para las paradas que ti
     <strong class="fa-stack-1x" style="line-height: 36px; color: black; position: absolute; width: 100%; text-align: center;">{:02d}</strong>
 </span>""".format(color, number))
     return icon
-
-
-def get_route_map(stations_real_time, number_district_sidebar, s_sidebar, van_sidebar): #Crea la ruta en un mapa folium
-    client = ors.Client(key=st.secrets["openroute_api_key"])
-    if s_sidebar == "Yes":
-        vehicle_start = [-3.6823731969472644, 40.46209827032537]
-    else:
-        vehicle_start = [eval(s_sidebar)[1], eval(s_sidebar)[0]]
-    m = folium.Map(location=[vehicle_start[1], vehicle_start[0]], zoom_start=12)
-    folium.Marker(location=[vehicle_start[1], vehicle_start[0]], popup='INICIO DE LA RUTA', icon=folium.Icon(color='purple')).add_to(m)
-    distrito_low = get_light0(get_district(stations_real_time, number_district_sidebar)).copy()
-    distrito_high = get_light1(get_district(stations_real_time, number_district_sidebar)).copy()
-    distrito_low["visited"] = False
-    distrito_high["visited"] = False
-    current_coords = vehicle_start
-    coords_list = [current_coords]
-    stop_counter = 1 
-    
-    for i in range(100):
-        if van_sidebar == "Empty":
-            current_coords = coords_list[-1]
-            if not distrito_high.loc[~distrito_high['visited'] & (distrito_high['light'] == 1)].empty:
-                nearest_station = find_nearest_to_coords(distrito_high.loc[~distrito_high['visited'] & (distrito_high['light'] == 1)], current_coords)
-                coords_list.append(nearest_station)
-                distrito_high.loc[distrito_high['coordinates'] == nearest_station, 'visited'] = True
-                distrito_high.loc[distrito_high['coordinates'] == nearest_station, 'light'] = 2
-                van_sidebar = "Full"
-                stop_counter += 1
-        elif van_sidebar == "Full":
-            current_coords = coords_list[-1]
-            if not distrito_low.loc[~distrito_low['visited'] & (distrito_low['light'] == 0)].empty:
-                nearest_station = find_nearest_to_coords(distrito_low.loc[~distrito_low['visited'] & (distrito_low['light'] == 0)], current_coords)
-                coords_list.append(nearest_station)
-                distrito_low.loc[distrito_low['coordinates'] == nearest_station, 'visited'] = True
-                distrito_low.loc[distrito_low['coordinates'] == nearest_station, 'light'] = 2
-                van_sidebar = "Empty"
-                stop_counter += 1
-    
-    vehicle_start = [-3.6823731969472644, 40.46209827032537]
-    final_route = create_route(client, coords_list[-1], vehicle_start)
-    waypoints = "|".join([f"{coord[1]},{coord[0]}" for coord in coords_list])
-    route_url = f"https://www.google.com/maps/dir/?api=1&origin={vehicle_start[1]},{vehicle_start[0]}&destination={coords_list[-1]}&waypoints={waypoints}"
-    st.markdown(f"[Ver ruta en Google Maps]({route_url})")
 
 loc = get_geolocation() #Con un componente de streamlit, detecta la ubicación actual del usuario
 user_coordinates = [loc["coords"]["latitude"], loc["coords"]["longitude"]] 
@@ -178,7 +136,7 @@ def get_route_map_google(stations_real_time, number_district_sidebar, van_sideba
     st.markdown(f"[Ver ruta en Google Maps]({route_url})")
     return m
 
-if "stations_real_time" not in st.session_state:
+if "stations_real_time" not in st.session_state: #Sólo se ejecuta la primera vez, el resto del tiempo accede al caché
     st.session_state.stations_real_time = get_stations()
 
 stations_streamlit = st.session_state.stations_real_time[(st.session_state.stations_real_time["light"] == 1) | (st.session_state.stations_real_time["light"] == 0)] #Selecciona sólo las estaciones que nos interesan (las que tienen déficit o superávit) para mostrarlas en streamlit
@@ -188,10 +146,25 @@ def invert_coordinates(coordinates): #Invierte las coordenadas necesarias (openr
     return f"[{lat}, {lon}]"
 stations_streamlit["coordinates"] = stations_streamlit["coordinates"].apply(invert_coordinates)
 
+def get_problematic_stations():
+    lights_df_sum = st.session_state.stations_real_time.pivot_table(index='code_district', columns='light', aggfunc='size', fill_value=0)
+    lights_df_sum = lights_df_sum.drop([2, 3], axis=1)
+    lights_df_sum["problematic_stations"] = lights_df_sum[0] +lights_df_sum[1]
+    lights_df_sum_sorted = lights_df_sum.sort_values(by="problematic_stations", ascending=False)
+    return lights_df_sum_sorted
+
+def get_heatmap():
+    plt.figure(figsize=(10, 6))
+    sns.heatmap(get_problematic_stations(), cmap='YlGnBu', annot=True, fmt='g', linewidths=.5)
+    plt.title('Estaciones problemáticas por distrito')
+    plt.xlabel('Luz')
+    plt.ylabel('Distrito')
+    plt.show()
+
 if __name__ == "__main__":
     st.sidebar.title("BiciMAD-worker")
     st.title("Esta es la ruta recomendada para su distrito:")
-    number_district_sidebar = st.sidebar.selectbox("¿A qué distrito se le ha asignado hoy?", ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21"], index=0)
+    number_district_sidebar = st.sidebar.selectbox("Distritos con necesidad de redistribución", get_problematic_stations().index.tolist(), index=0)
     van_sidebar = st.sidebar.selectbox("¿Su furgoneta está vacía ('Empty') o llena ('Full')?", ["Empty", "Full"], index=0)
     route_map = get_route_map_google(st.session_state.stations_real_time, number_district_sidebar, van_sidebar)
     st_data = folium_static(route_map)
@@ -200,4 +173,5 @@ if __name__ == "__main__":
     2. Descárguelas en las estaciones verdes.
     3. Si todavía queda tiempo en su jornada laboral, reinicie la aplicación e introduzca sus nuevas coordenadas.
     4. Conduzca con cuidado y que tenga un buen turno.""")
-    st.write(get_district(stations_streamlit, number_district_sidebar)[["address", "coordinates"]])
+    st.write("Estas son las estaciones a visitar:")
+    st.write(get_district(stations_streamlit, number_district_sidebar)["address"])
