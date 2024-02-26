@@ -71,12 +71,9 @@ def number_DivIcon(color,number): #Crea iconos numerados para las paradas que ti
     return icon
 
 loc = get_geolocation() 
-if loc is not None:
-    user_latitude = loc["coords"].get("latitude")
-    user_longitude = loc["coords"].get("longitude")
-else:
-    user_latitude = -3.6823731969472644
-    user_longitude = 40.46209827032537
+user_latitude = loc["coords"].get("latitude")
+user_longitude = loc["coords"].get("longitude")
+
 
 def get_route_map_google(stations_real_time, number_district_sidebar, van_sidebar): #Hace display de la ruta del trabajador tanto en google maps como en un mapa folium
     client = ors.Client(key=st.secrets["openroute_api_key"])
