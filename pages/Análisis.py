@@ -62,4 +62,3 @@ if __name__ == "__main__":
         st.session_state.heatmap = get_heatmap()
     if st.sidebar.button("Actualizar datos"):
         st.session_state.heatmap = get_stations()
-    heatmap
