@@ -150,21 +150,6 @@ def invert_coordinates(coordinates): #Invierte las coordenadas necesarias (openr
     return f"[{lat}, {lon}]"
 stations_streamlit["coordinates"] = stations_streamlit["coordinates"].apply(invert_coordinates)
 
-def get_problematic_stations():
-    lights_df_sum = st.session_state.stations_real_time.pivot_table(index='code_district', columns='light', aggfunc='size', fill_value=0)
-    lights_df_sum = lights_df_sum.drop([2, 3], axis=1)
-    lights_df_sum["problematic_stations"] = lights_df_sum[0] +lights_df_sum[1]
-    lights_df_sum_sorted = lights_df_sum.sort_values(by="problematic_stations", ascending=False)
-    return lights_df_sum_sorted
-
-def get_heatmap():
-    plt.figure(figsize=(10, 6))
-    sns.heatmap(get_problematic_stations(), cmap='YlGnBu', annot=True, fmt='g', linewidths=.5)
-    plt.title('Estaciones problemáticas por distrito')
-    plt.xlabel('Luz')
-    plt.ylabel('Distrito')
-    plt.show()
-
 if __name__ == "__main__":
     st.sidebar.title("BiciMAD-worker")
     st.title("Esta es la ruta recomendada para su distrito:")
