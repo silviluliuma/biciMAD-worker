@@ -74,7 +74,6 @@ loc = get_geolocation() #Con un componente de streamlit, detecta la ubicación a
 user_coordinates = [loc["coords"]["latitude"], loc["coords"]["longitude"]]
 user_latitude = user_coordinates[0] 
 user_longitude = user_coordinates[1]
-st.write(type(user_longitude), type(user_latitude))
 
 def get_route_map_google(stations_real_time, number_district_sidebar, van_sidebar): #Hace display de la ruta del trabajador tanto en google maps como en un mapa folium
     client = ors.Client(key=st.secrets["openroute_api_key"])
