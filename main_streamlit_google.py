@@ -159,7 +159,6 @@ def get_heatmap():
     plt.show()
 
 if __name__ == "__main__":
-    st.sidebar.button("Refresh")
     st.sidebar.title("BiciMAD-worker")
     st.title("Esta es la ruta recomendada para su distrito:")
     number_district_sidebar = st.sidebar.selectbox("Distritos con necesidad de redistribución", get_problematic_stations().index.tolist(), index=0)
