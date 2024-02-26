@@ -175,6 +175,4 @@ if __name__ == "__main__":
     van_sidebar = st.sidebar.selectbox("¿Su furgoneta está vacía ('Empty') o llena ('Full')?", ["Empty", "Full"], index=0)
     route_map = get_route_map_google(st.session_state.stations_real_time, number_district_sidebar, van_sidebar)
     st_data = folium_static(route_map)
-    st.write("Estas son las estaciones a visitar:")
-    st.write(get_district(stations_streamlit, number_district_sidebar)["address"])
     
