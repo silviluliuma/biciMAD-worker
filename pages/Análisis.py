@@ -49,7 +49,8 @@ def get_problematic_stations():
 
 def get_heatmap():
     plt.figure(figsize=(10, 6))
-    sns.heatmap(get_problematic_stations(), cmap='YlGnBu', annot=True, fmt='g', linewidths=.5)
+    custom_palette = sns.light_palette("orange", as_cmap=True)
+    sns.heatmap(get_problematic_stations(), cmap=custom_palette, annot=True, fmt='g', linewidths=.5)
     plt.title('Estaciones problemáticas por distrito')
     plt.xlabel('Luz')
     plt.ylabel('Distrito')
