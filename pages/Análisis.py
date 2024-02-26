@@ -55,6 +55,11 @@ def get_heatmap():
     plt.ylabel('Distrito')
     st.pyplot()
 
+heatmap = get_heatmap()
 
 if __name__ == "__main__":
-    get_heatmap()
+    if "heatmap" not in st.session_state:
+        st.session_state.heatmap = get_heatmap()
+    if st.sidebar.button("Actualizar datos"):
+        st.session_state.heatmap = get_stations()
+    heatmap
