@@ -172,11 +172,6 @@ if __name__ == "__main__":
     van_sidebar = st.sidebar.selectbox("¿Su furgoneta está vacía ('Empty') o llena ('Full')?", ["Empty", "Full"], index=0)
     route_map = get_route_map_google(st.session_state.stations_real_time, number_district_sidebar, van_sidebar)
     st_data = folium_static(route_map)
-    st.text("""Instrucciones de reparto BiciMAD-worker: 
-    1. Por favor, recoja las bicicletas en las estaciones naranjas.
-    2. Descárguelas en las estaciones verdes.
-    3. Si todavía queda tiempo en su jornada laboral, reinicie la aplicación e introduzca sus nuevas coordenadas.
-    4. Conduzca con cuidado y que tenga un buen turno.""")
     st.write("Estas son las estaciones a visitar:")
     st.write(get_district(stations_streamlit, number_district_sidebar)["address"])
     
