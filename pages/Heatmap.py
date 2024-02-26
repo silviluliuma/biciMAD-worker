@@ -36,8 +36,10 @@ def get_stations(): #Usar el token para acceder a la información en tiempo real
     stations_real_time['coordinates'] = list(zip(stations_real_time['longitude'], stations_real_time['latitude']))
     return stations_real_time
 
+stations_real_time = get_stations()
+
 def get_problematic_stations():
-    lights_df_sum = st.session_state.stations_real_time.pivot_table(index='code_district', columns='light', aggfunc='size', fill_value=0)
+    lights_df_sum = stations_real_time.pivot_table(index='code_district', columns='light', aggfunc='size', fill_value=0)
     lights_df_sum = lights_df_sum.drop([2, 3], axis=1)
     lights_df_sum["problematic_stations"] = lights_df_sum[0] +lights_df_sum[1]
     lights_df_sum_sorted = lights_df_sum.sort_values(by="problematic_stations", ascending=False)
