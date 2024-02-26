@@ -55,5 +55,6 @@ def get_heatmap():
     plt.ylabel('Distrito')
     st.pyplot()
 
-get_heatmap()
 
+if __name__ == "__main__":
+    get_heatmap()
