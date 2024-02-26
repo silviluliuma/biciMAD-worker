@@ -13,6 +13,8 @@ from streamlit_js_eval import get_geolocation
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+st.set_option('deprecation.showPyplotGlobalUse', False)
+
 #Funciones
 
 def get_token(): #Coger el token de la api de bicimad
