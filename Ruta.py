@@ -72,7 +72,7 @@ def number_DivIcon(color,number): #Crea iconos numerados para las paradas que ti
 
 loc = get_geolocation() #Con un componente de streamlit, detecta la ubicación actual del usuario
 user_coordinates = [loc["coords"]["latitude"], loc["coords"]["longitude"]]
-st.write(user_coordinates) 
+st.write(type(user_coordinates)) 
 
 def get_route_map_google(stations_real_time, number_district_sidebar, van_sidebar): #Hace display de la ruta del trabajador tanto en google maps como en un mapa folium
     client = ors.Client(key=st.secrets["openroute_api_key"])
