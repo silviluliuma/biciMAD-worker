@@ -74,8 +74,8 @@ loc = get_geolocation()
 
 def get_user_loc(loc):
     if loc is None:
-        user_latitude = -3.6823731969472644
-        user_longitude = 40.46209827032537
+        user_latitude = 40.46209827032537
+        user_longitude = -3.6823731969472644
         print("Can't access user location, starting route from default location (EMT)")
     else:
         user_latitude = loc["coords"].get("latitude")
