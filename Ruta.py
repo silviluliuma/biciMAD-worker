@@ -141,7 +141,7 @@ def get_route_map_google(stations_real_time, number_district_sidebar, van_sideba
     waypoints_list = [f"{coord[1]},{coord[0]}" if isinstance(coord, tuple) else f"{coord[1]},{coord[0]}" for coord in coords_list[1:-1]]
     waypoints = "|".join(waypoints_list)
     destination_coords = f"{coords_list[-1][1]},{coords_list[-1][0]}"
-    route_url = f"https://www.google.com/maps/dir/?api=1&origin={get_user_loc()[0]},{get_user_loc()[1]}&destination={destination_coords}&waypoints={waypoints}"
+    route_url = f"https://www.google.com/maps/dir/?api=1&origin={get_user_loc(loc)[0]},{get_user_loc(loc)[1]}&destination={destination_coords}&waypoints={waypoints}"
     st.markdown(f"[Ver ruta en Google Maps]({route_url})")
     return m
 
