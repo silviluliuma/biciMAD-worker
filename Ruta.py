@@ -84,7 +84,7 @@ def get_user_loc(loc):
 
 def get_route_map_google(stations_real_time, number_district_sidebar, van_sidebar): #Hace display de la ruta del trabajador tanto en google maps como en un mapa folium
     client = ors.Client(key=st.secrets["openroute_api_key"])
-    vehicle_start = get_user_loc(loc)[0], get_user_loc(loc)[1]
+    vehicle_start = get_user_loc(loc)[1], get_user_loc(loc)[0]
     m = folium.Map(location=[vehicle_start[1], vehicle_start[0]], zoom_start=12)
     folium.Marker(location=[vehicle_start[1], vehicle_start[0]], popup='INICIO DE LA RUTA', icon=folium.Icon(color='purple')).add_to(m)
     
