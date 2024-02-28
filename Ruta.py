@@ -155,7 +155,9 @@ stations_streamlit = st.session_state.stations_real_time[(st.session_state.stati
 def invert_coordinates(coordinates): #Invierte las coordenadas necesarias (openrouteservice y google maps toman en diferente posición la latitud y la longitud)
     lon, lat = coordinates
     return f"[{lat}, {lon}]"
-stations_streamlit["coordinates"] = stations_streamlit["coordinates"].apply(invert_coordinates)
+#stations_streamlit["coordinates"] = stations_streamlit["coordinates"].apply(invert_coordinates)
+stations_streamlit.loc[:, "coordinates"] = stations_streamlit["coordinates"].apply(invert_coordinates)
+
 
 def get_problematic_stations():
     lights_df_sum = st.session_state.stations_real_time.pivot_table(index='code_district', columns='light', aggfunc='size', fill_value=0)
