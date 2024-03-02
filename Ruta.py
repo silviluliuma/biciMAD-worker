@@ -82,8 +82,10 @@ def get_user_loc(loc):
         user_longitude = loc["coords"].get("longitude")
     return [user_latitude, user_longitude]
 
-def get_route_map_google(stations_real_time, number_district_sidebar, van_sidebar): #Hace display de la ruta del trabajador tanto en google maps como en un mapa folium
-    client = ors.Client(key=st.secrets["openroute_api_key"])
+if "client" not in st.session_state:
+    st.session_state.client = ors.Client(key=st.secrets["openroute_api_key"])
+
+def get_route_map_google(client, stations_real_time, number_district_sidebar, van_sidebar): #Hace display de la ruta del trabajador tanto en google maps como en un mapa folium
     vehicle_start = get_user_loc(loc)[1], get_user_loc(loc)[0]
     m = folium.Map(location=[vehicle_start[1], vehicle_start[0]], zoom_start=12)
     folium.Marker(location=[vehicle_start[1], vehicle_start[0]], popup='INICIO DE LA RUTA', icon=folium.Icon(color='purple')).add_to(m)
@@ -171,6 +173,6 @@ if __name__ == "__main__":
     st.title("Esta es la ruta recomendada para su distrito:")
     number_district_sidebar = st.sidebar.selectbox("Seleccione uno de los distritos con necesidad de redistribución", get_problematic_stations().index.tolist(), index=0)
     van_sidebar = st.sidebar.selectbox("¿Su furgoneta está vacía ('Empty') o llena ('Full')?", ["Empty", "Full"], index=0)
-    route_map = get_route_map_google(st.session_state.stations_real_time, number_district_sidebar, van_sidebar)
+    route_map = get_route_map_google(st.session_state.client, st.session_state.stations_real_time, number_district_sidebar, van_sidebar)
     st_data = folium_static(route_map)
     
