@@ -100,7 +100,7 @@ def get_route_map_google(client, stations_real_time, number_district_sidebar, va
     coords_list = [current_coords]
     stop_counter = 1 
     
-    for i in range(10): #En el distrito 01 hay más estaciones pero el límite de la API es 40 por minuto.
+    for i in range(10): #En el distrito 01 hay más estaciones pero el límite de la API es 40 por minuto. Aclarar.
         if van_sidebar == "Empty":
             current_coords = coords_list[-1]
             if not distrito_high.loc[~distrito_high['visited'] & (distrito_high['light'] == 1)].empty:
