@@ -98,7 +98,7 @@ def get_route_map_google(stations_real_time, number_district_sidebar, van_sideba
     coords_list = [current_coords]
     stop_counter = 1 
     
-    for i in range(40): #En el distrito 01 hay más estaciones pero el límite de la API es 40 por minuto. Para el resto de las estaciones sobra con 40
+    for i in range(39): #En el distrito 01 hay más estaciones pero el límite de la API es 40 por minuto. Para el resto de las estaciones sobra con 40
         if van_sidebar == "Empty":
             current_coords = coords_list[-1]
             if not distrito_high.loc[~distrito_high['visited'] & (distrito_high['light'] == 1)].empty:
