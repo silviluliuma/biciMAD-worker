@@ -96,7 +96,6 @@ def ratio_underpopulated():
     
 if __name__ == "__main__":
     conn = st.connection("postgresql", type="sql")
-    cur = conn.cursor()
     if st.sidebar.button("Actualizar datos"):
         st.session_state.heatmap = get_stations()
     st.write("Heatmap de estaciones problemáticas por distrito")
