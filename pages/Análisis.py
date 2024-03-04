@@ -79,19 +79,7 @@ def ratio_underpopulated():
     WHERE d.light = '0'
     GROUP BY s.code_district, ts.total_stations
     ORDER BY s.code_district;""", ttl = "10m")
-    st.session_state.conn.commit()
-    results_underpopulated = st.session_state.conn.fetchall()
-    districts = [result[0] for result in results_underpopulated]
-    light_counts = [result[1] for result in results_underpopulated]
     st.write(query)
-    plt.figure(figsize=(10, 6))
-    plt.bar(districts, light_counts, color='skyblue')
-    plt.xlabel('Distrito')
-    plt.ylabel('Estaciones con falta de bicicletas')
-    plt.title('Ratio de estaciones infrapobladas según distrito de Madrid')
-    plt.xticks(rotation=45, ha='right')
-    plt.tight_layout()
-    plt.show()
 
 #MAIN
     
