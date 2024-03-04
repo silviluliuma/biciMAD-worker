@@ -58,7 +58,7 @@ def get_heatmap():
     st.pyplot()
 
 def ratio_underpopulated():
-    query= """
+    query= conn.query("""
         WITH TotalStations AS (
             SELECT s.code_district, COUNT(s.id) AS total_stations
             FROM disponibilidad d
@@ -75,7 +75,8 @@ def ratio_underpopulated():
     INNER JOIN TotalStations ts ON s.code_district = ts.code_district
     WHERE d.light = '0'
     GROUP BY s.code_district, ts.total_stations
-    ORDER BY s.code_district;"""
+    ORDER BY s.code_district;""", ttl = "10m")
+
     conn.commit()
     cur.execute(query)
     results_underpopulated = cur.fetchall()
@@ -91,19 +92,10 @@ def ratio_underpopulated():
     plt.tight_layout()
     plt.show()
 
-
-
-
-
-
+#MAIN
+    
 if __name__ == "__main__":
-    conn = psycopg2.connect(
-    dbname="bicimad_worker",
-    user="postgres",
-    password="gisu7su7",
-    host="localhost",
-    port="5432"
-)
+    conn = st.connection("postgresql", type="sql")
     cur = conn.cursor()
     if st.sidebar.button("Actualizar datos"):
         st.session_state.heatmap = get_stations()
