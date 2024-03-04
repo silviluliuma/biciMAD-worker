@@ -89,4 +89,4 @@ if __name__ == "__main__":
     st.write("Heatmap de estaciones problemáticas por distrito")
     heatmap = get_heatmap()
     st.write("Distritos con falta de bicicletas en las estaciones")
-    underpopulated_stations = ratio_underpopulated()
+    ratio_underpopulated()
