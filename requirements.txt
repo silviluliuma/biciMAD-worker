@@ -10,4 +10,5 @@ streamlit-bokeh-events
 streamlit_js_eval
 matplotlib
 seaborn
-psycopg2
+psycopg2==2.9.9
+psycopg2-binary
