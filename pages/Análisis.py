@@ -83,7 +83,7 @@ def ratio_underpopulated():
     results_underpopulated = conn.fetchall()
     districts = [result[0] for result in results_underpopulated]
     light_counts = [result[1] for result in results_underpopulated]
-    query
+    st.write(query)
     plt.figure(figsize=(10, 6))
     plt.bar(districts, light_counts, color='skyblue')
     plt.xlabel('Distrito')
