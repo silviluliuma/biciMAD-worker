@@ -57,11 +57,9 @@ def get_heatmap():
     plt.ylabel('Distrito')
     st.pyplot()
 
-if "conn" not in st.session_state:
-    st.session_state.conn = st.connection("postgresql", type="sql")
-
 def ratio_underpopulated():
-    query= st.session_state.conn.query("""
+    conn = st.connection("postgresql", type="sql")
+    query= conn.query("""
         WITH TotalStations AS (
             SELECT s.code_district, COUNT(s.id) AS total_stations
             FROM disponibilidad d
