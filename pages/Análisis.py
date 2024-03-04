@@ -58,26 +58,33 @@ def get_heatmap():
     st.pyplot()
 
 def ratio_underpopulated():
+    # Initializing connection.
     conn = st.connection("postgresql", type="sql")
-    query= conn.query("""
+    # Performing query.
+    query = """
         WITH TotalStations AS (
             SELECT s.code_district, COUNT(s.id) AS total_stations
             FROM disponibilidad d
             INNER JOIN stations s ON d.id = s.id
             GROUP BY s.code_district
-    )
+        )
 
-    SELECT s.code_district, 
-        COUNT(s.id) AS count_light_0, 
-        ts.total_stations,
-        COUNT(s.id)::float / ts.total_stations AS ratio_light_0
-    FROM disponibilidad d
-    INNER JOIN stations s ON d.id = s.id
-    INNER JOIN TotalStations ts ON s.code_district = ts.code_district
-    WHERE d.light = '0'
-    GROUP BY s.code_district, ts.total_stations
-    ORDER BY s.code_district;""", ttl = "10m")
-    st.write(query)
+        SELECT s.code_district, 
+            COUNT(s.id) AS count_light_0, 
+            ts.total_stations,
+            COUNT(s.id)::float / ts.total_stations AS ratio_light_0
+        FROM disponibilidad d
+        INNER JOIN stations s ON d.id = s.id
+        INNER JOIN TotalStations ts ON s.code_district = ts.code_district
+        WHERE d.light = '0'
+        GROUP BY s.code_district, ts.total_stations
+        ORDER BY s.code_district;
+    """
+    # Executing the query.
+    underpopulated_stations = conn.query(query, ttl="10m")
+
+    # Printing results.
+    st.write(underpopulated_stations)
 
 #MAIN
     
