@@ -58,10 +58,10 @@ def get_heatmap():
     st.pyplot()
 
 if "conn" not in st.session_state:
-    conn = st.connection("postgresql", type="sql")
+    st.session_state.conn = st.connection("postgresql", type="sql")
 
 def ratio_underpopulated():
-    query= conn.query("""
+    query= st.session_state.conn.query("""
         WITH TotalStations AS (
             SELECT s.code_district, COUNT(s.id) AS total_stations
             FROM disponibilidad d
@@ -79,8 +79,8 @@ def ratio_underpopulated():
     WHERE d.light = '0'
     GROUP BY s.code_district, ts.total_stations
     ORDER BY s.code_district;""", ttl = "10m")
-    conn.commit()
-    results_underpopulated = conn.fetchall()
+    st.session_state.conn.commit()
+    results_underpopulated = st.session_state.conn.fetchall()
     districts = [result[0] for result in results_underpopulated]
     light_counts = [result[1] for result in results_underpopulated]
     st.write(query)
