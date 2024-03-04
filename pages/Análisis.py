@@ -57,6 +57,9 @@ def get_heatmap():
     plt.ylabel('Distrito')
     st.pyplot()
 
+if "conn" not in st.session_state:
+    conn = st.connection("postgresql", type="sql")
+
 def ratio_underpopulated():
     query= conn.query("""
         WITH TotalStations AS (
@@ -76,13 +79,11 @@ def ratio_underpopulated():
     WHERE d.light = '0'
     GROUP BY s.code_district, ts.total_stations
     ORDER BY s.code_district;""", ttl = "10m")
-
     conn.commit()
-    cur.execute(query)
-    results_underpopulated = cur.fetchall()
+    results_underpopulated = conn.fetchall()
     districts = [result[0] for result in results_underpopulated]
     light_counts = [result[1] for result in results_underpopulated]
-
+    query
     plt.figure(figsize=(10, 6))
     plt.bar(districts, light_counts, color='skyblue')
     plt.xlabel('Distrito')
@@ -95,7 +96,6 @@ def ratio_underpopulated():
 #MAIN
     
 if __name__ == "__main__":
-    conn = st.connection("postgresql", type="sql")
     if st.sidebar.button("Actualizar datos"):
         st.session_state.heatmap = get_stations()
     st.write("Heatmap de estaciones problemáticas por distrito")
