@@ -10,3 +10,4 @@ streamlit-bokeh-events
 streamlit_js_eval
 matplotlib
 seaborn
+psycopg2

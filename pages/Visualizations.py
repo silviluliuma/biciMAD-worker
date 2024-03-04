@@ -12,6 +12,8 @@ from folium.features import DivIcon
 from streamlit_js_eval import get_geolocation
 import matplotlib.pyplot as plt
 import seaborn as sns
+import psycopg2
+import seaborn as sns
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
@@ -55,7 +57,57 @@ def get_heatmap():
     plt.ylabel('Distrito')
     st.pyplot()
 
+def ratio_underpopulated():
+    query= """
+        WITH TotalStations AS (
+            SELECT s.code_district, COUNT(s.id) AS total_stations
+            FROM disponibilidad d
+            INNER JOIN stations s ON d.id = s.id
+            GROUP BY s.code_district
+    )
+
+    SELECT s.code_district, 
+        COUNT(s.id) AS count_light_0, 
+        ts.total_stations,
+        COUNT(s.id)::float / ts.total_stations AS ratio_light_0
+    FROM disponibilidad d
+    INNER JOIN stations s ON d.id = s.id
+    INNER JOIN TotalStations ts ON s.code_district = ts.code_district
+    WHERE d.light = '0'
+    GROUP BY s.code_district, ts.total_stations
+    ORDER BY s.code_district;"""
+    conn.commit()
+    cur.execute(query)
+    results_underpopulated = cur.fetchall()
+    districts = [result[0] for result in results_underpopulated]
+    light_counts = [result[1] for result in results_underpopulated]
+
+    plt.figure(figsize=(10, 6))
+    plt.bar(districts, light_counts, color='skyblue')
+    plt.xlabel('Distrito')
+    plt.ylabel('Estaciones con falta de bicicletas')
+    plt.title('Ratio de estaciones infrapobladas según distrito de Madrid')
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    plt.show()
+
+
+
+
+
+
 if __name__ == "__main__":
+    conn = psycopg2.connect(
+    dbname="bicimad_worker",
+    user="postgres",
+    password="gisu7su7",
+    host="localhost",
+    port="5432"
+)
+    cur = conn.cursor()
     if st.sidebar.button("Actualizar datos"):
         st.session_state.heatmap = get_stations()
+    st.write("Heatmap de estaciones problemáticas por distrito")
     heatmap = get_heatmap()
+    st.write("Distritos con falta de bicicletas en las estaciones")
+    underpopulated_stations = ratio_underpopulated()
