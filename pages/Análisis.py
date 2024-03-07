@@ -63,7 +63,7 @@ def get_heatmap():
         'Moratalaz': '14', 'Ciudad Lineal': '15', 'Hortaleza': '16', 'Villaverde': '17',
         'Villa de Vallecas': '18', 'Vicálvaro': '19', 'San Blas-Canillejas': '20', 'Barajas': '21'
     }
-    st.write(problematic_stations.index)
+    st.write(problematic_stations.index.to_list())
     heatmap.set_yticklabels([district_dict[district] for district in problematic_stations.index], rotation=0)
     plt.title('Estaciones problemáticas por distrito')
     plt.xlabel('Luz')
