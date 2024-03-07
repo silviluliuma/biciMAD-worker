@@ -52,20 +52,16 @@ def get_problematic_stations():
     lights_df_sum_sorted = lights_df_sum.sort_values(by="problematic_stations", ascending=False)
     return lights_df_sum_sorted
 
-problematic_stations_df = get_problematic_stations()
-m = folium.Map(location=[40.4168, -3.7038], zoom_start=12)  # Coordenadas de Madrid
-
-# Crear el mapa de calor
-heat_data = problematic_stations_df.reset_index()[['code_district', 'light_0']].values.tolist()
-HeatMap(heat_data, radius=15).add_to(m)
-
-# Mostrar el mapa en Streamlit
-st.markdown("## Mapa de calor de estaciones problemáticas por distrito")
-folium_static(m)
-
 def get_heatmap():
     plt.figure(figsize=(10, 6))
-    sns.heatmap(get_problematic_stations(), cmap='YlGnBu', annot=True, fmt='g', linewidths=.5)
+    sns.heatmap(get_problematic_stations(), cmap='Oranges', annot=True, fmt='g', linewidths=.5)
+    district_names = [
+        'Centro', 'Arganzuela', 'Retiro', 'Salamanca', 'Chamartín', 'Tetuán', 'Chamberí',
+        'Fuencarral-El Pardo', 'Moncloa-Aravaca', 'Latina', 'Carabanchel', 'Usera', 
+        'Puente de Vallecas', 'Moratalaz', 'Ciudad Lineal', 'Hortaleza', 'Villaverde',
+        'Villa de Vallecas', 'Vicálvaro', 'San Blas-Canillejas', 'Barajas'
+    ]
+    heatmap.set_yticklabels(district_names, rotation=0)
     plt.title('Estaciones problemáticas por distrito')
     plt.xlabel('Luz')
     plt.ylabel('Distrito')
