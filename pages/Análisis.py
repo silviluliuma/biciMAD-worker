@@ -15,6 +15,7 @@ from google.cloud.sql.connector import Connector
 import pg8000.native
 from sqlalchemy import text
 import sqlalchemy
+from st_files_connection import FilesConnection
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
@@ -116,4 +117,5 @@ if __name__ == "__main__":
     st.write("Heatmap de estaciones problemáticas por distrito")
     heatmap = get_heatmap()
     st.write("Distritos con falta de bicicletas en las estaciones")
-    get_underpopulated_districts()
+    conn = st.connection("postgresql", type="sql")
+    st.write(conn.query(query_ratio_0))
