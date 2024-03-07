@@ -57,48 +57,17 @@ def get_heatmap():
     plt.ylabel('Distrito')
     st.pyplot()
 
-conn = psycopg2.connect(
-    dbname="bicimad_worker",
-    user=st.secrets["google_cloud_user"],
-    password=st.secrets["google_cloud_pass"],
-    host=st.secrets["google_cloud_ip"]
-)
-cur = conn.cursor()
+db_params = {
+    "dbname": "bicimad_worker",
+    "user": st.secrets["google_cloud_user"],
+    "password": st.secrets["google_cloud_pass"],
+    "host": st.secrets["google_cloud_ip"],
+    "port": 5432
+}
 
+conn = psycopg2.connect(**db_params)
 
-query_ratio_0 = """
-    WITH TotalStations AS (
-        SELECT e.code_district, COUNT(e.id) AS total_stations
-        FROM disponibilidad d
-        INNER JOIN estaciones e ON d.id = e.id
-        GROUP BY e.code_district
-    )
-
-    SELECT e.code_district, 
-           COUNT(e.id) AS count_light_0, 
-           ts.total_stations,
-           COUNT(e.id)::float / ts.total_stations AS ratio_light_0
-    FROM disponibilidad d
-    INNER JOIN estaciones e ON d.id = e.id
-    INNER JOIN TotalStations ts ON e.code_district = ts.code_district
-    WHERE d.light = '0'
-    GROUP BY e.code_district, ts.total_stations
-    ORDER BY e.code_district;
-"""
-
-def get_underpopulated_districts():
-    with pool.connect() as conn:
-        results = conn.execute(text(query_ratio_0)).fetchall()
-    districts = [result[0] for result in results]
-    light_counts = [result[1] for result in results]
-    plt.figure(figsize=(10, 6))
-    plt.bar(districts, light_counts, color='skyblue')
-    plt.xlabel('Distrito')
-    plt.ylabel('Estaciones con falta de bicicletas')
-    plt.title('Ratio de estaciones infrapobladas según distrito de Madrid')
-    plt.xticks(rotation=45, ha='right')
-    plt.tight_layout()
-    st.pyplot(plt)
+st.write(conn)
 
 #MAIN
     
@@ -108,7 +77,3 @@ if __name__ == "__main__":
     st.write("Heatmap de estaciones problemáticas por distrito")
     heatmap = get_heatmap()
     st.write("Distritos con falta de bicicletas en las estaciones")
-    cur.execute(query_ratio_0)
-    cur.fetchall()
-    cur.close()
-    conn.close()
