@@ -75,7 +75,7 @@ def get_districts(light, period):
                     SELECT e.code_district, COUNT(e.id) AS total_stations
                     FROM disponibilidad d
                     INNER JOIN estaciones e ON d.id = e.id
-                    WHERE d.last_updated >= NOW() - INTERVAL '24 HOURS' 
+                    WHERE TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH:MI:SS') >= NOW() - INTERVAL '24 HOURS' 
                     GROUP BY e.code_district
                 )
                 SELECT e.code_district, 
@@ -86,7 +86,7 @@ def get_districts(light, period):
                 INNER JOIN estaciones e ON d.id = e.id
                 INNER JOIN TotalStations ts ON e.code_district = ts.code_district
                 WHERE d.light = '0'
-                    AND d.last_updated >= NOW() - INTERVAL '24 HOURS'
+                    AND TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH:MI:SS') >= NOW() - INTERVAL '24 HOURS'
                 GROUP BY e.code_district, ts.total_stations
                 ORDER BY e.code_district;
             """
@@ -112,7 +112,7 @@ def get_districts(light, period):
                 SELECT e.code_district, COUNT(e.id) AS total_stations
                 FROM disponibilidad d
                 INNER JOIN estaciones e ON d.id = e.id
-                WHERE d.last_updated >= NOW() - INTERVAL '24 HOURS'
+                WHERE TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH:MI:SS') >= NOW() - INTERVAL '24 HOURS'
                 GROUP BY e.code_district
             )
             SELECT e.code_district, 
@@ -123,7 +123,7 @@ def get_districts(light, period):
             INNER JOIN estaciones e ON d.id = e.id
             INNER JOIN TotalStations ts ON e.code_district = ts.code_district
             WHERE d.light = '1'
-                AND d.last_updated >= NOW() - INTERVAL '24 HOURS'
+                AND TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH:MI:SS') >= NOW() - INTERVAL '24 HOURS'
             GROUP BY e.code_district, ts.total_stations
             ORDER BY e.code_district;"""
             cursor.execute(query_ratio_1)
@@ -150,7 +150,7 @@ def get_districts(light, period):
                     SELECT e.code_district, COUNT(e.id) AS total_stations
                     FROM disponibilidad d
                     INNER JOIN estaciones e ON d.id = e.id
-                    WHERE d.last_updated >= NOW() - INTERVAL '48 HOURS' 
+                    WHERE TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH:MI:SS') >= NOW() - INTERVAL '48 HOURS' 
                     GROUP BY e.code_district
                 )
                 SELECT e.code_district, 
@@ -161,7 +161,7 @@ def get_districts(light, period):
                 INNER JOIN estaciones e ON d.id = e.id
                 INNER JOIN TotalStations ts ON e.code_district = ts.code_district
                 WHERE d.light = '0'
-                    AND d.last_updated >= NOW() - INTERVAL '48 HOURS'
+                    AND TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH:MI:SS') >= NOW() - INTERVAL '48 HOURS'
                 GROUP BY e.code_district, ts.total_stations
                 ORDER BY e.code_district;
             """
@@ -187,7 +187,7 @@ def get_districts(light, period):
                 SELECT e.code_district, COUNT(e.id) AS total_stations
                 FROM disponibilidad d
                 INNER JOIN estaciones e ON d.id = e.id
-                WHERE d.last_updated >= NOW() - INTERVAL '48 HOURS'
+                WHERE TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH:MI:SS') >= NOW() - INTERVAL '48 HOURS'
                 GROUP BY e.code_district
             )
             SELECT e.code_district, 
@@ -198,7 +198,7 @@ def get_districts(light, period):
             INNER JOIN estaciones e ON d.id = e.id
             INNER JOIN TotalStations ts ON e.code_district = ts.code_district
             WHERE d.light = '1'
-                AND d.last_updated >= NOW() - INTERVAL '48 HOURS'
+                AND TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH:MI:SS') >= NOW() - INTERVAL '48 HOURS'
             GROUP BY e.code_district, ts.total_stations
             ORDER BY e.code_district;"""
             cursor.execute(query_ratio_1)
@@ -225,7 +225,7 @@ def get_districts(light, period):
                     SELECT e.code_district, COUNT(e.id) AS total_stations
                     FROM disponibilidad d
                     INNER JOIN estaciones e ON d.id = e.id
-                    WHERE d.last_updated >= NOW() - INTERVAL '7 DAYS' 
+                    WHERE TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH:MI:SS') >= NOW() - INTERVAL '7 DAYS' 
                     GROUP BY e.code_district
                 )
                 SELECT e.code_district, 
@@ -236,7 +236,7 @@ def get_districts(light, period):
                 INNER JOIN estaciones e ON d.id = e.id
                 INNER JOIN TotalStations ts ON e.code_district = ts.code_district
                 WHERE d.light = '0'
-                    AND d.last_updated >= NOW() - INTERVAL '7 DAYS'
+                    AND TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH:MI:SS') >= NOW() - INTERVAL '7 DAYS'
                 GROUP BY e.code_district, ts.total_stations
                 ORDER BY e.code_district;
             """
@@ -262,7 +262,7 @@ def get_districts(light, period):
                 SELECT e.code_district, COUNT(e.id) AS total_stations
                 FROM disponibilidad d
                 INNER JOIN estaciones e ON d.id = e.id
-                WHERE d.last_updated >= NOW() - INTERVAL '7 DAYS'
+                WHERE TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH:MI:SS') >= NOW() - INTERVAL '7 DAYS'
                 GROUP BY e.code_district
             )
             SELECT e.code_district, 
@@ -273,7 +273,7 @@ def get_districts(light, period):
             INNER JOIN estaciones e ON d.id = e.id
             INNER JOIN TotalStations ts ON e.code_district = ts.code_district
             WHERE d.light = '1'
-                AND d.last_updated >= NOW() - INTERVAL '7 DAYS'
+                AND TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH:MI:SS') >= NOW() - INTERVAL '7 DAYS'
             GROUP BY e.code_district, ts.total_stations
             ORDER BY e.code_district;"""
             cursor.execute(query_ratio_1)
