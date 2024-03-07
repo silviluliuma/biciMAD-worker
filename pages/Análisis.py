@@ -52,14 +52,11 @@ def get_problematic_stations():
     lights_df_sum_sorted = lights_df_sum.sort_values(by="problematic_stations", ascending=False)
     return lights_df_sum_sorted
 
-# Obtener los datos de las estaciones problemáticas
 problematic_stations_df = get_problematic_stations()
-
-# Crear un mapa de Folium
 m = folium.Map(location=[40.4168, -3.7038], zoom_start=12)  # Coordenadas de Madrid
 
 # Crear el mapa de calor
-heat_data = problematic_stations_df[['code_district', 'light_0']].values.tolist()
+heat_data = problematic_stations_df.reset_index()[['code_district', 'light_0']].values.tolist()
 HeatMap(heat_data, radius=15).add_to(m)
 
 # Mostrar el mapa en Streamlit
