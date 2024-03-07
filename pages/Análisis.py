@@ -14,6 +14,9 @@ import seaborn as sns
 import pg8000.native
 from sqlalchemy import text
 import sqlalchemy
+from folium.plugins import HeatMap
+import folium
+from streamlit_folium import folium_static
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
@@ -48,6 +51,20 @@ def get_problematic_stations():
     lights_df_sum["problematic_stations"] = lights_df_sum[0] +lights_df_sum[1]
     lights_df_sum_sorted = lights_df_sum.sort_values(by="problematic_stations", ascending=False)
     return lights_df_sum_sorted
+
+# Obtener los datos de las estaciones problemáticas
+problematic_stations_df = get_problematic_stations()
+
+# Crear un mapa de Folium
+m = folium.Map(location=[40.4168, -3.7038], zoom_start=12)  # Coordenadas de Madrid
+
+# Crear el mapa de calor
+heat_data = problematic_stations_df[['code_district', 'light_0']].values.tolist()
+HeatMap(heat_data, radius=15).add_to(m)
+
+# Mostrar el mapa en Streamlit
+st.markdown("## Mapa de calor de estaciones problemáticas por distrito")
+folium_static(m)
 
 def get_heatmap():
     plt.figure(figsize=(10, 6))
