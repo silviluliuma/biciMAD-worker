@@ -48,8 +48,8 @@ stations_real_time = get_stations()
 def get_problematic_stations():
     lights_df_sum = stations_real_time.pivot_table(index='code_district', columns='light', aggfunc='size', fill_value=0)
     lights_df_sum = lights_df_sum.drop([2, 3], axis=1)
-    lights_df_sum["problematic_stations"] = lights_df_sum[0] +lights_df_sum[1]
-    lights_df_sum_sorted = lights_df_sum.sort_values(by="problematic_stations", ascending=False)
+    lights_df_sum["Número de estaciones problemáticas"] = lights_df_sum[0] +lights_df_sum[1]
+    lights_df_sum_sorted = lights_df_sum.sort_values(by="Número de estaciones problemáticas", ascending=False)
     return lights_df_sum_sorted
 
 def get_heatmap():
