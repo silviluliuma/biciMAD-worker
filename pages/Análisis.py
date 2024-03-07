@@ -164,7 +164,7 @@ if __name__ == "__main__":
         st.session_state.heatmap = get_stations()
     st.write("Heatmap de estaciones problemáticas por distrito")
     heatmap = get_heatmap()
-    select_box_query = st.sidebar.selectbox("Seleccione el gráfico que desea visualizar", ["Estaciones infrapobladas, Estaciones sobrepobladas"], index=0)
+    select_box_query = st.sidebar.selectbox("Seleccione el gráfico que desea visualizar", ["Estaciones infrapobladas", "Estaciones sobrepobladas"], index=0)
     if select_box_query == "Estaciones infrapobladas":
         st.write("Distritos con falta de bicicletas en las estaciones")
         get_underpopulated_districts()
