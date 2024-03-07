@@ -62,12 +62,59 @@ db_params = {
     "user": st.secrets["google_cloud_user"],
     "password": st.secrets["google_cloud_pass"],
     "host": st.secrets["google_cloud_ip"],
-    "port": 5432
+    "port": 5432  # El puerto predeterminado para PostgreSQL es 5432
 }
 
+# Conectar a la base de datos
 conn = psycopg2.connect(**db_params)
 
-st.write(conn)
+# Crear un cursor
+cursor = conn.cursor()
+
+# Definir la consulta SQL
+query_ratio_0 = """
+    WITH TotalStations AS (
+        SELECT e.code_district, COUNT(e.id) AS total_stations
+        FROM disponibilidad d
+        INNER JOIN estaciones e ON d.id = e.id
+        GROUP BY e.code_district
+    )
+
+    SELECT e.code_district, 
+           COUNT(e.id) AS count_light_0, 
+           ts.total_stations,
+           COUNT(e.id)::float / ts.total_stations AS ratio_light_0
+    FROM disponibilidad d
+    INNER JOIN estaciones e ON d.id = e.id
+    INNER JOIN TotalStations ts ON e.code_district = ts.code_district
+    WHERE d.light = '0'
+    GROUP BY e.code_district, ts.total_stations
+    ORDER BY e.code_district;
+"""
+
+# Ejecutar la consulta SQL
+cursor.execute(query_ratio_0)
+
+# Obtener los resultados
+results = cursor.fetchall()
+
+# Cerrar el cursor y la conexión
+cursor.close()
+conn.close()
+
+# Procesar los resultados para la visualización
+districts = [result[0] for result in results]
+light_counts = [result[1] for result in results]
+
+# Visualizar los resultados
+plt.figure(figsize=(10, 6))
+plt.bar(districts, light_counts, color='skyblue')
+plt.xlabel('Distrito')
+plt.ylabel('Estaciones con falta de bicicletas')
+plt.title('Ratio de estaciones infrapobladas según distrito de Madrid')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+st.pyplot(plt)  # Mostrar el gráfico en Streamlit
 
 #MAIN
     
