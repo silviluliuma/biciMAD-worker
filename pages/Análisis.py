@@ -65,14 +65,60 @@ db_params = {
     "port": 5432  # El puerto predeterminado para PostgreSQL es 5432
 }
 
-# Conectar a la base de datos
-conn = psycopg2.connect(**db_params)
+def get_underpopulated_districts():
 
-# Crear un cursor
-cursor = conn.cursor()
+    # Conexión a mi base de datos
+    conn = psycopg2.connect(**db_params)
+    cursor = conn.cursor()
 
-# Definir la consulta SQL
-query_ratio_0 = """
+    # Definir la consulta SQL
+    query_ratio_0 = """
+        WITH TotalStations AS (
+            SELECT e.code_district, COUNT(e.id) AS total_stations
+            FROM disponibilidad d
+            INNER JOIN estaciones e ON d.id = e.id
+            GROUP BY e.code_district
+        )
+
+        SELECT e.code_district, 
+            COUNT(e.id) AS count_light_0, 
+            ts.total_stations,
+            COUNT(e.id)::float / ts.total_stations AS ratio_light_0
+        FROM disponibilidad d
+        INNER JOIN estaciones e ON d.id = e.id
+        INNER JOIN TotalStations ts ON e.code_district = ts.code_district
+        WHERE d.light = '0'
+        GROUP BY e.code_district, ts.total_stations
+        ORDER BY e.code_district;
+    """
+
+    cursor.execute(query_ratio_0)
+
+   
+    results = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    districts = [result[0] for result in results]
+    light_counts = [result[1] for result in results]
+
+    plt.figure(figsize=(10, 6))
+    plt.bar(districts, light_counts, color='skyblue')
+    plt.xlabel('Distrito')
+    plt.ylabel('Estaciones con falta de bicicletas')
+    plt.title('Ratio de estaciones infrapobladas según distrito de Madrid')
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    st.pyplot(plt) 
+
+def get_overpopulated_districts():
+    # Conexión a mi base de datos
+    conn = psycopg2.connect(**db_params)
+    cursor = conn.cursor()
+
+    # Definir la consulta SQL
+    query_ratio_1 = """
     WITH TotalStations AS (
         SELECT e.code_district, COUNT(e.id) AS total_stations
         FROM disponibilidad d
@@ -81,40 +127,35 @@ query_ratio_0 = """
     )
 
     SELECT e.code_district, 
-           COUNT(e.id) AS count_light_0, 
-           ts.total_stations,
-           COUNT(e.id)::float / ts.total_stations AS ratio_light_0
+        COUNT(e.id) AS count_light_1, 
+        ts.total_stations,
+        COUNT(e.id)::float / ts.total_stations AS ratio_light_1
     FROM disponibilidad d
     INNER JOIN estaciones e ON d.id = e.id
     INNER JOIN TotalStations ts ON e.code_district = ts.code_district
-    WHERE d.light = '0'
+    WHERE d.light = '1'
     GROUP BY e.code_district, ts.total_stations
-    ORDER BY e.code_district;
-"""
+    ORDER BY e.code_district;"""
 
-# Ejecutar la consulta SQL
-cursor.execute(query_ratio_0)
+    cursor.execute(query_ratio_1)
 
-# Obtener los resultados
-results = cursor.fetchall()
+   
+    results = cursor.fetchall()
 
-# Cerrar el cursor y la conexión
-cursor.close()
-conn.close()
+    cursor.close()
+    conn.close()
 
-# Procesar los resultados para la visualización
-districts = [result[0] for result in results]
-light_counts = [result[1] for result in results]
+    districts = [result[0] for result in results]
+    light_counts = [result[1] for result in results]
 
-# Visualizar los resultados
-plt.figure(figsize=(10, 6))
-plt.bar(districts, light_counts, color='skyblue')
-plt.xlabel('Distrito')
-plt.ylabel('Estaciones con falta de bicicletas')
-plt.title('Ratio de estaciones infrapobladas según distrito de Madrid')
-plt.xticks(rotation=45, ha='right')
-plt.tight_layout()
-st.pyplot(plt)  # Mostrar el gráfico en Streamlit
+    plt.figure(figsize=(10, 6))
+    plt.bar(districts, light_counts, color='skyblue')
+    plt.xlabel('Distrito')
+    plt.ylabel('Estaciones con falta de bicicletas')
+    plt.title('Cantidad estaciones súperpobladas según distrito de Madrid')
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    plt.show()
 
 #MAIN
     
@@ -124,3 +165,6 @@ if __name__ == "__main__":
     st.write("Heatmap de estaciones problemáticas por distrito")
     heatmap = get_heatmap()
     st.write("Distritos con falta de bicicletas en las estaciones")
+    get_underpopulated_districts()
+    st.write("Distritos con exceso de bicicletas en las estaciones")
+    get_overpopulated_districts()
