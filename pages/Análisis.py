@@ -53,6 +53,7 @@ def get_problematic_stations():
     return lights_df_sum_sorted
 
 def get_heatmap():
+    problematic_stations= get_problematic_stations()
     plt.figure(figsize=(10, 6))
     heatmap = sns.heatmap(get_problematic_stations(), cmap='Oranges', annot=True, fmt='g', linewidths=.5)
     district_dict = {
@@ -62,7 +63,7 @@ def get_heatmap():
         'Moratalaz': '14', 'Ciudad Lineal': '15', 'Hortaleza': '16', 'Villaverde': '17',
         'Villa de Vallecas': '18', 'Vicálvaro': '19', 'San Blas-Canillejas': '20', 'Barajas': '21'
     }
-    heatmap.set_yticklabels([district_dict[district] for district in get_problematic_stations().index], rotation=0)
+    heatmap.set_yticklabels([district_dict[district] for district in int(problematic_stations.index)], rotation=0)
     plt.title('Estaciones problemáticas por distrito')
     plt.xlabel('Luz')
     plt.ylabel('Distrito')
