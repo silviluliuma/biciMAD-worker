@@ -55,13 +55,14 @@ def get_problematic_stations():
 def get_heatmap():
     plt.figure(figsize=(10, 6))
     heatmap = sns.heatmap(get_problematic_stations(), cmap='Oranges', annot=True, fmt='g', linewidths=.5)
-    district_names = [
-        'Centro', 'Arganzuela', 'Retiro', 'Salamanca', 'Chamartín', 'Tetuán', 'Chamberí',
-        'Fuencarral-El Pardo', 'Moncloa-Aravaca', 'Latina', 'Carabanchel', 'Usera', 
-        'Puente de Vallecas', 'Moratalaz', 'Ciudad Lineal', 'Hortaleza', 'Villaverde',
-        'Villa de Vallecas', 'Vicálvaro', 'San Blas-Canillejas', 'Barajas'
-    ]
-    heatmap.set_yticklabels(district_names, rotation=0)
+    district_dict = {
+        'Centro': '01', 'Arganzuela': '02', 'Retiro': '03', 'Salamanca': '04', 'Chamartín': '05',
+        'Tetuán': '06', 'Chamberí': '07', 'Fuencarral-El Pardo': '08', 'Moncloa-Aravaca': '09',
+        'Latina': '10', 'Carabanchel': '11', 'Usera': '12', 'Puente de Vallecas': '13',
+        'Moratalaz': '14', 'Ciudad Lineal': '15', 'Hortaleza': '16', 'Villaverde': '17',
+        'Villa de Vallecas': '18', 'Vicálvaro': '19', 'San Blas-Canillejas': '20', 'Barajas': '21'
+    }
+    heatmap.set_yticklabels([district_dict[district] for district in get_problematic_stations().index], rotation=0)
     plt.title('Estaciones problemáticas por distrito')
     plt.xlabel('Luz')
     plt.ylabel('Distrito')
