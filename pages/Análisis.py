@@ -61,10 +61,10 @@ def get_heatmap():
 def getconn() -> pg8000.native.Connection:
     connector = Connector()
     conn: pg8000.connections.Connection = connector.connect(
-        os.environ.get("google_cloud_project"),
+        st.secrets["google_cloud_project"],
         "pg8000",
-        user=os.environ.get("google_cloud_user"),
-        password=os.environ.get("google_cloud_pass"),
+        user=st.secrets["google_cloud_user"],
+        password=st.secrets["google_cloud_pass"],
         db="bicimad_worker"
     )
     return conn

@@ -13,3 +13,4 @@ seaborn
 psycopg2-binary
 sqlalchemy==2.0.27
 pg8000
+google.cloud.sql.connector
