@@ -156,6 +156,7 @@ def get_overpopulated_districts():
     plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
     plt.show()
+    st.pyplot(plt) 
 
 #MAIN
     
