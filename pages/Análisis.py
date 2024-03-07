@@ -11,11 +11,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import psycopg2
 import seaborn as sns
-from google.cloud.sql.connector import Connector
 import pg8000.native
 from sqlalchemy import text
 import sqlalchemy
-from st_files_connection import FilesConnection
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
@@ -59,21 +57,14 @@ def get_heatmap():
     plt.ylabel('Distrito')
     st.pyplot()
 
-def getconn() -> pg8000.native.Connection:
-    connector = Connector()
-    conn: pg8000.connections.Connection = connector.connect(
-        st.secrets["google_cloud_project"],
-        "pg8000",
-        user=st.secrets["google_cloud_user"],
-        password=st.secrets["google_cloud_pass"],
-        db="bicimad_worker"
-    )
-    return conn
-
-pool = sqlalchemy.create_engine(
-    "postgresql+pg8000://",
-    creator=getconn,
+conn = psycopg2.connect(
+    dbname="bicimad_worker"
+    user=st.secrets["google_cloud_user"],
+    password=st.secrets["google_cloud_pass"],
+    host=st.secrets["google_cloud_ip"]
 )
+cur = conn.cursor()
+
 
 query_ratio_0 = """
     WITH TotalStations AS (
@@ -117,5 +108,7 @@ if __name__ == "__main__":
     st.write("Heatmap de estaciones problemáticas por distrito")
     heatmap = get_heatmap()
     st.write("Distritos con falta de bicicletas en las estaciones")
-    conn = st.connection("postgresql", type="sql")
-    st.write(conn.query(query_ratio_0))
+    cur.execute(query_ratio_0)
+    cur.fetchall()
+    cur.close()
+    conn.close()
