@@ -173,6 +173,6 @@ if __name__ == "__main__":
     st.title("Esta es la ruta recomendada para su distrito:")
     number_district_sidebar = st.sidebar.selectbox("Seleccione uno de los distritos con necesidad de redistribución", get_problematic_stations().index.tolist(), index=0)
     van_sidebar = st.sidebar.selectbox("¿Su furgoneta está vacía ('Empty') o llena ('Full')?", ["Empty", "Full"], index=0)
-    route_map = get_route_map_google(st.session_state.client, st.session_state.stations_real_time, number_district_sidebar, van_sidebar)
+    #route_map = get_route_map_google(st.session_state.client, st.session_state.stations_real_time, number_district_sidebar, van_sidebar)
     st_data = folium_static(route_map)
     
