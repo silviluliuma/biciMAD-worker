@@ -65,99 +65,303 @@ db_params = {
     "port": 5432  # El puerto predeterminado para PostgreSQL es 5432
 }
 
-def get_underpopulated_districts():
-
-    # Conexión a mi base de datos
-    conn = psycopg2.connect(**db_params)
-    cursor = conn.cursor()
-
-    # Definir la consulta SQL
-    query_ratio_0 = """
-        WITH TotalStations AS (
-            SELECT e.code_district, COUNT(e.id) AS total_stations
+def get_districts(light, period):
+    if period == 1:
+        if light == 0:
+            conn = psycopg2.connect(**db_params)
+            cursor = conn.cursor()
+            query = """
+                WITH TotalStations AS (
+                    SELECT e.code_district, COUNT(e.id) AS total_stations
+                    FROM disponibilidad d
+                    INNER JOIN estaciones e ON d.id = e.id
+                    WHERE d.last_updated >= NOW() - INTERVAL '24 HOURS' 
+                    GROUP BY e.code_district
+                )
+                SELECT e.code_district, 
+                    COUNT(e.id) AS count_light_0, 
+                    ts.total_stations,
+                    COUNT(e.id)::float / ts.total_stations AS ratio_light_0
+                FROM disponibilidad d
+                INNER JOIN estaciones e ON d.id = e.id
+                INNER JOIN TotalStations ts ON e.code_district = ts.code_district
+                WHERE d.light = '0'
+                    AND d.last_updated >= NOW() - INTERVAL '24 HOURS'
+                GROUP BY e.code_district, ts.total_stations
+                ORDER BY e.code_district;
+            """
+            cursor.execute(query)
+            results = cursor.fetchall()
+            cursor.close()
+            conn.close()
+            districts = [result[0] for result in results]
+            light_counts = [result[1] for result in results]
+            plt.figure(figsize=(10, 6))
+            plt.bar(districts, light_counts, color='skyblue')
+            plt.xlabel('Distrito')
+            plt.ylabel('Estaciones con falta de bicicletas')
+            plt.title('Ratio de estaciones infrapobladas según distrito de Madrid en el último día')
+            plt.xticks(rotation=45, ha='right')
+            plt.tight_layout()
+            st.pyplot(plt) 
+        elif light == 1: 
+            conn = psycopg2.connect(**db_params)
+            cursor = conn.cursor()
+            query_ratio_1 = """
+            WITH TotalStations AS (
+                SELECT e.code_district, COUNT(e.id) AS total_stations
+                FROM disponibilidad d
+                INNER JOIN estaciones e ON d.id = e.id
+                WHERE d.last_updated >= NOW() - INTERVAL '24 HOURS'
+                GROUP BY e.code_district
+            )
+            SELECT e.code_district, 
+                COUNT(e.id) AS count_light_1, 
+                ts.total_stations,
+                COUNT(e.id)::float / ts.total_stations AS ratio_light_1
             FROM disponibilidad d
             INNER JOIN estaciones e ON d.id = e.id
-            GROUP BY e.code_district
-        )
-
-        SELECT e.code_district, 
-            COUNT(e.id) AS count_light_0, 
-            ts.total_stations,
-            COUNT(e.id)::float / ts.total_stations AS ratio_light_0
-        FROM disponibilidad d
-        INNER JOIN estaciones e ON d.id = e.id
-        INNER JOIN TotalStations ts ON e.code_district = ts.code_district
-        WHERE d.light = '0'
-        GROUP BY e.code_district, ts.total_stations
-        ORDER BY e.code_district;
-    """
-
-    cursor.execute(query_ratio_0)
-
-   
-    results = cursor.fetchall()
-
-    cursor.close()
-    conn.close()
-
-    districts = [result[0] for result in results]
-    light_counts = [result[1] for result in results]
-
-    plt.figure(figsize=(10, 6))
-    plt.bar(districts, light_counts, color='skyblue')
-    plt.xlabel('Distrito')
-    plt.ylabel('Estaciones con falta de bicicletas')
-    plt.title('Ratio de estaciones infrapobladas según distrito de Madrid')
-    plt.xticks(rotation=45, ha='right')
-    plt.tight_layout()
-    st.pyplot(plt) 
-
-def get_overpopulated_districts():
-    # Conexión a mi base de datos
-    conn = psycopg2.connect(**db_params)
-    cursor = conn.cursor()
-
-    # Definir la consulta SQL
-    query_ratio_1 = """
-    WITH TotalStations AS (
-        SELECT e.code_district, COUNT(e.id) AS total_stations
-        FROM disponibilidad d
-        INNER JOIN estaciones e ON d.id = e.id
-        GROUP BY e.code_district
-    )
-
-    SELECT e.code_district, 
-        COUNT(e.id) AS count_light_1, 
-        ts.total_stations,
-        COUNT(e.id)::float / ts.total_stations AS ratio_light_1
-    FROM disponibilidad d
-    INNER JOIN estaciones e ON d.id = e.id
-    INNER JOIN TotalStations ts ON e.code_district = ts.code_district
-    WHERE d.light = '1'
-    GROUP BY e.code_district, ts.total_stations
-    ORDER BY e.code_district;"""
-
-    cursor.execute(query_ratio_1)
-
-   
-    results = cursor.fetchall()
-
-    cursor.close()
-    conn.close()
-
-    districts = [result[0] for result in results]
-    light_counts = [result[1] for result in results]
-
-    plt.figure(figsize=(10, 6))
-    plt.bar(districts, light_counts, color='skyblue')
-    plt.xlabel('Distrito')
-    plt.ylabel('Estaciones con falta de bicicletas')
-    plt.title('Cantidad estaciones súperpobladas según distrito de Madrid')
-    plt.xticks(rotation=45, ha='right')
-    plt.tight_layout()
-    plt.show()
-    st.pyplot(plt) 
-
+            INNER JOIN TotalStations ts ON e.code_district = ts.code_district
+            WHERE d.light = '1'
+                AND d.last_updated >= NOW() - INTERVAL '24 HOURS'
+            GROUP BY e.code_district, ts.total_stations
+            ORDER BY e.code_district;"""
+            cursor.execute(query_ratio_1)
+            results = cursor.fetchall()
+            cursor.close()
+            conn.close()
+            districts = [result[0] for result in results]
+            light_counts = [result[1] for result in results]
+            plt.figure(figsize=(10, 6))
+            plt.bar(districts, light_counts, color='skyblue')
+            plt.xlabel('Distrito')
+            plt.ylabel('Estaciones con falta de bicicletas')
+            plt.title('Cantidad estaciones súperpobladas según distrito de Madrid en el último día')
+            plt.xticks(rotation=45, ha='right')
+            plt.tight_layout()
+            plt.show()
+            st.pyplot(plt) 
+    elif period == 2:
+        if light == 0:
+            conn = psycopg2.connect(**db_params)
+            cursor = conn.cursor()
+            query = """
+                WITH TotalStations AS (
+                    SELECT e.code_district, COUNT(e.id) AS total_stations
+                    FROM disponibilidad d
+                    INNER JOIN estaciones e ON d.id = e.id
+                    WHERE d.last_updated >= NOW() - INTERVAL '48 HOURS' 
+                    GROUP BY e.code_district
+                )
+                SELECT e.code_district, 
+                    COUNT(e.id) AS count_light_0, 
+                    ts.total_stations,
+                    COUNT(e.id)::float / ts.total_stations AS ratio_light_0
+                FROM disponibilidad d
+                INNER JOIN estaciones e ON d.id = e.id
+                INNER JOIN TotalStations ts ON e.code_district = ts.code_district
+                WHERE d.light = '0'
+                    AND d.last_updated >= NOW() - INTERVAL '48 HOURS'
+                GROUP BY e.code_district, ts.total_stations
+                ORDER BY e.code_district;
+            """
+            cursor.execute(query)
+            results = cursor.fetchall()
+            cursor.close()
+            conn.close()
+            districts = [result[0] for result in results]
+            light_counts = [result[1] for result in results]
+            plt.figure(figsize=(10, 6))
+            plt.bar(districts, light_counts, color='skyblue')
+            plt.xlabel('Distrito')
+            plt.ylabel('Estaciones con falta de bicicletas')
+            plt.title('Ratio de estaciones infrapobladas según distrito de Madrid en los últimos dos días')
+            plt.xticks(rotation=45, ha='right')
+            plt.tight_layout()
+            st.pyplot(plt) 
+        elif light == 1: 
+            conn = psycopg2.connect(**db_params)
+            cursor = conn.cursor()
+            query_ratio_1 = """
+            WITH TotalStations AS (
+                SELECT e.code_district, COUNT(e.id) AS total_stations
+                FROM disponibilidad d
+                INNER JOIN estaciones e ON d.id = e.id
+                WHERE d.last_updated >= NOW() - INTERVAL '48 HOURS'
+                GROUP BY e.code_district
+            )
+            SELECT e.code_district, 
+                COUNT(e.id) AS count_light_1, 
+                ts.total_stations,
+                COUNT(e.id)::float / ts.total_stations AS ratio_light_1
+            FROM disponibilidad d
+            INNER JOIN estaciones e ON d.id = e.id
+            INNER JOIN TotalStations ts ON e.code_district = ts.code_district
+            WHERE d.light = '1'
+                AND d.last_updated >= NOW() - INTERVAL '48 HOURS'
+            GROUP BY e.code_district, ts.total_stations
+            ORDER BY e.code_district;"""
+            cursor.execute(query_ratio_1)
+            results = cursor.fetchall()
+            cursor.close()
+            conn.close()
+            districts = [result[0] for result in results]
+            light_counts = [result[1] for result in results]
+            plt.figure(figsize=(10, 6))
+            plt.bar(districts, light_counts, color='skyblue')
+            plt.xlabel('Distrito')
+            plt.ylabel('Estaciones con falta de bicicletas')
+            plt.title('Cantidad estaciones súperpobladas según distrito de Madrid en los últimos dos días')
+            plt.xticks(rotation=45, ha='right')
+            plt.tight_layout()
+            plt.show()
+            st.pyplot(plt)
+    elif period == 7:
+        if light == 0:
+            conn = psycopg2.connect(**db_params)
+            cursor = conn.cursor()
+            query = """
+                WITH TotalStations AS (
+                    SELECT e.code_district, COUNT(e.id) AS total_stations
+                    FROM disponibilidad d
+                    INNER JOIN estaciones e ON d.id = e.id
+                    WHERE d.last_updated >= NOW() - INTERVAL '7 DAYS' 
+                    GROUP BY e.code_district
+                )
+                SELECT e.code_district, 
+                    COUNT(e.id) AS count_light_0, 
+                    ts.total_stations,
+                    COUNT(e.id)::float / ts.total_stations AS ratio_light_0
+                FROM disponibilidad d
+                INNER JOIN estaciones e ON d.id = e.id
+                INNER JOIN TotalStations ts ON e.code_district = ts.code_district
+                WHERE d.light = '0'
+                    AND d.last_updated >= NOW() - INTERVAL '7 DAYS'
+                GROUP BY e.code_district, ts.total_stations
+                ORDER BY e.code_district;
+            """
+            cursor.execute(query)
+            results = cursor.fetchall()
+            cursor.close()
+            conn.close()
+            districts = [result[0] for result in results]
+            light_counts = [result[1] for result in results]
+            plt.figure(figsize=(10, 6))
+            plt.bar(districts, light_counts, color='skyblue')
+            plt.xlabel('Distrito')
+            plt.ylabel('Estaciones con falta de bicicletas')
+            plt.title('Ratio de estaciones infrapobladas según distrito de Madrid en la última semana')
+            plt.xticks(rotation=45, ha='right')
+            plt.tight_layout()
+            st.pyplot(plt) 
+        elif light == 1: 
+            conn = psycopg2.connect(**db_params)
+            cursor = conn.cursor()
+            query_ratio_1 = """
+            WITH TotalStations AS (
+                SELECT e.code_district, COUNT(e.id) AS total_stations
+                FROM disponibilidad d
+                INNER JOIN estaciones e ON d.id = e.id
+                WHERE d.last_updated >= NOW() - INTERVAL '7 DAYS'
+                GROUP BY e.code_district
+            )
+            SELECT e.code_district, 
+                COUNT(e.id) AS count_light_1, 
+                ts.total_stations,
+                COUNT(e.id)::float / ts.total_stations AS ratio_light_1
+            FROM disponibilidad d
+            INNER JOIN estaciones e ON d.id = e.id
+            INNER JOIN TotalStations ts ON e.code_district = ts.code_district
+            WHERE d.light = '1'
+                AND d.last_updated >= NOW() - INTERVAL '7 DAYS'
+            GROUP BY e.code_district, ts.total_stations
+            ORDER BY e.code_district;"""
+            cursor.execute(query_ratio_1)
+            results = cursor.fetchall()
+            cursor.close()
+            conn.close()
+            districts = [result[0] for result in results]
+            light_counts = [result[1] for result in results]
+            plt.figure(figsize=(10, 6))
+            plt.bar(districts, light_counts, color='skyblue')
+            plt.xlabel('Distrito')
+            plt.ylabel('Estaciones con falta de bicicletas')
+            plt.title('Cantidad estaciones súperpobladas según distrito de Madrid en la última semana')
+            plt.xticks(rotation=45, ha='right')
+            plt.tight_layout()
+            plt.show()
+            st.pyplot(plt)
+    elif period == 100:
+        if light == 0:
+            conn = psycopg2.connect(**db_params)
+            cursor = conn.cursor()
+            query = """
+                WITH TotalStations AS (
+                    SELECT e.code_district, COUNT(e.id) AS total_stations
+                    FROM disponibilidad d
+                    INNER JOIN estaciones e ON d.id = e.id
+                    GROUP BY e.code_district
+                )
+                SELECT e.code_district, 
+                    COUNT(e.id) AS count_light_0, 
+                    ts.total_stations,
+                    COUNT(e.id)::float / ts.total_stations AS ratio_light_0
+                FROM disponibilidad d
+                INNER JOIN estaciones e ON d.id = e.id
+                INNER JOIN TotalStations ts ON e.code_district = ts.code_district
+                WHERE d.light = '0'
+                GROUP BY e.code_district, ts.total_stations
+                ORDER BY e.code_district;
+            """
+            cursor.execute(query)
+            results = cursor.fetchall()
+            cursor.close()
+            conn.close()
+            districts = [result[0] for result in results]
+            light_counts = [result[1] for result in results]
+            plt.figure(figsize=(10, 6))
+            plt.bar(districts, light_counts, color='skyblue')
+            plt.xlabel('Distrito')
+            plt.ylabel('Estaciones con falta de bicicletas')
+            plt.title('Ratio de estaciones infrapobladas según distrito de Madrid (todos los datos disponibles)')
+            plt.xticks(rotation=45, ha='right')
+            plt.tight_layout()
+            st.pyplot(plt) 
+        elif light == 1: 
+            conn = psycopg2.connect(**db_params)
+            cursor = conn.cursor()
+            query_ratio_1 = """
+            WITH TotalStations AS (
+                SELECT e.code_district, COUNT(e.id) AS total_stations
+                FROM disponibilidad d
+                INNER JOIN estaciones e ON d.id = e.id
+                GROUP BY e.code_district
+            )
+            SELECT e.code_district, 
+                COUNT(e.id) AS count_light_1, 
+                ts.total_stations,
+                COUNT(e.id)::float / ts.total_stations AS ratio_light_1
+            FROM disponibilidad d
+            INNER JOIN estaciones e ON d.id = e.id
+            INNER JOIN TotalStations ts ON e.code_district = ts.code_district
+            WHERE d.light = '1'
+            GROUP BY e.code_district, ts.total_stations
+            ORDER BY e.code_district;"""
+            cursor.execute(query_ratio_1)
+            results = cursor.fetchall()
+            cursor.close()
+            conn.close()
+            districts = [result[0] for result in results]
+            light_counts = [result[1] for result in results]
+            plt.figure(figsize=(10, 6))
+            plt.bar(districts, light_counts, color='skyblue')
+            plt.xlabel('Distrito')
+            plt.ylabel('Estaciones con falta de bicicletas')
+            plt.title('Cantidad estaciones súperpobladas según distrito de Madrid (todos los datos disponibles)')
+            plt.xticks(rotation=45, ha='right')
+            plt.tight_layout()
+            plt.show()
+            st.pyplot(plt) 
 #MAIN
     
 if __name__ == "__main__":
@@ -166,9 +370,35 @@ if __name__ == "__main__":
     st.write("Heatmap de estaciones problemáticas por distrito")
     heatmap = get_heatmap()
     select_box_query = st.sidebar.selectbox("Seleccione el gráfico que desea visualizar", ["Estaciones infrapobladas", "Estaciones sobrepobladas"], index=0)
-    if select_box_query == "Estaciones infrapobladas":
-        st.write("Distritos con falta de bicicletas en las estaciones")
-        get_underpopulated_districts()
-    elif select_box_query == "Estaciones sobrepobladas":
-        st.write("Distritos con exceso de bicicletas en las estaciones")
-        get_overpopulated_districts()
+    select_box_period = st.sidebar.selectbox("Seleccione el período a analizar", ["1 Día", "2 Días", "Semana", "Histórico"])
+    if select_box_period == "1 Día":
+        if select_box_query == "Estaciones infrapobladas":
+            st.write("Distritos con falta de bicicletas en las estaciones")
+            get_districts(0,1)
+        elif select_box_query == "Estaciones sobrepobladas":
+            st.write("Distritos con exceso de bicicletas en las estaciones")
+            get_districts(1,1)
+    elif select_box_period == "2 Días":
+        if select_box_query == "Estaciones infrapobladas":
+            st.write("Distritos con falta de bicicletas en las estaciones")
+            get_districts(0,2)
+        elif select_box_query == "Estaciones sobrepobladas":
+            st.write("Distritos con exceso de bicicletas en las estaciones")
+            get_districts(1,2)
+    elif select_box_period == "Semana":
+        if select_box_query == "Estaciones infrapobladas":
+            st.write("Distritos con falta de bicicletas en las estaciones")
+            get_districts(0,7)
+        elif select_box_query == "Estaciones sobrepobladas":
+            st.write("Distritos con exceso de bicicletas en las estaciones")
+            get_districts(1,7)
+    elif select_box_period == "Histórico":
+        if select_box_query == "Estaciones infrapobladas":
+            st.write("Distritos con falta de bicicletas en las estaciones")
+            get_districts(0,100)
+        elif select_box_query == "Estaciones sobrepobladas":
+            st.write("Distritos con exceso de bicicletas en las estaciones")
+            get_districts(1,100)
+
+
+        
