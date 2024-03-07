@@ -58,7 +58,7 @@ def get_heatmap():
     st.pyplot()
 
 conn = psycopg2.connect(
-    dbname="bicimad_worker"
+    dbname="bicimad_worker",
     user=st.secrets["google_cloud_user"],
     password=st.secrets["google_cloud_pass"],
     host=st.secrets["google_cloud_ip"]
