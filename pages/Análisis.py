@@ -53,18 +53,17 @@ def get_problematic_stations():
     return lights_df_sum_sorted
 
 def get_heatmap():
-    problematic_stations= get_problematic_stations()
-    plt.figure(figsize=(10, 6))
-    heatmap = sns.heatmap(get_problematic_stations(), cmap='Oranges', annot=True, fmt='g', linewidths=.5)
     district_dict = {
-        'Centro': '01', 'Arganzuela': '02', 'Retiro': '03', 'Salamanca': '04', 'Chamartín': '05',
-        'Tetuán': '06', 'Chamberí': '07', 'Fuencarral-El Pardo': '08', 'Moncloa-Aravaca': '09',
-        'Latina': '10', 'Carabanchel': '11', 'Usera': '12', 'Puente de Vallecas': '13',
-        'Moratalaz': '14', 'Ciudad Lineal': '15', 'Hortaleza': '16', 'Villaverde': '17',
-        'Villa de Vallecas': '18', 'Vicálvaro': '19', 'San Blas-Canillejas': '20', 'Barajas': '21'
-    }
-    st.write(problematic_stations.index.to_list())
-    heatmap.set_yticklabels([district_dict[district] for district in problematic_stations.index.to_list()], rotation=0)
+    '01': 'Centro', '02': 'Arganzuela', '03': 'Retiro', '04': 'Salamanca', '05': 'Chamartín',
+    '06': 'Tetuán', '07': 'Chamberí', '08': 'Fuencarral-El Pardo', '09': 'Moncloa-Aravaca',
+    '10': 'Latina', '11': 'Carabanchel', '12': 'Usera', '13': 'Puente de Vallecas',
+    '14': 'Moratalaz', '15': 'Ciudad Lineal', '16': 'Hortaleza', '17': 'Villaverde',
+    '18': 'Villa de Vallecas', '19': 'Vicálvaro', '20': 'San Blas-Canillejas', '21': 'Barajas'
+}
+    problematic_stations = get_problematic_stations()
+    plt.figure(figsize=(10, 6))
+    sns.heatmap(get_problematic_stations(), cmap='Oranges', annot=True, fmt='g', linewidths=.5)
+    plt.yticks(ticks=range(len(problematic_stations.index)), labels=[district_dict[code] for code in problematic_stations.index])
     plt.title('Estaciones problemáticas por distrito')
     plt.xlabel('Luz')
     plt.ylabel('Distrito')
