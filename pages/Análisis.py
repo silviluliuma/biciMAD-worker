@@ -3,17 +3,18 @@ import requests
 import json
 import os
 import pandas as pd
-import folium
 import openrouteservice as ors
 from geopy.distance import great_circle
 import streamlit as st
-from streamlit_folium import folium_static
-from folium.features import DivIcon
 from streamlit_js_eval import get_geolocation
 import matplotlib.pyplot as plt
 import seaborn as sns
 import psycopg2
 import seaborn as sns
+from google.cloud.sql.connector import Connector
+import pg8000.native
+from sqlalchemy import text
+import sqlalchemy
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
@@ -57,34 +58,55 @@ def get_heatmap():
     plt.ylabel('Distrito')
     st.pyplot()
 
-def ratio_underpopulated():
-    # Initializing connection.
-    conn = st.connection("postgresql", type="sql")
-    # Performing query.
-    query = """
-        WITH TotalStations AS (
-            SELECT s.code_district, COUNT(s.id) AS total_stations
-            FROM disponibilidad d
-            INNER JOIN stations s ON d.id = s.id
-            GROUP BY s.code_district
-        )
+def getconn() -> pg8000.native.Connection:
+    connector = Connector()
+    conn: pg8000.connections.Connection = connector.connect(
+        os.environ.get("google_cloud_project"),
+        "pg8000",
+        user=os.environ.get("google_cloud_user"),
+        password=os.environ.get("google_cloud_pass"),
+        db="bicimad_worker"
+    )
+    return conn
 
-        SELECT s.code_district, 
-            COUNT(s.id) AS count_light_0, 
-            ts.total_stations,
-            COUNT(s.id)::float / ts.total_stations AS ratio_light_0
+pool = sqlalchemy.create_engine(
+    "postgresql+pg8000://",
+    creator=getconn,
+)
+
+query_ratio_0 = """
+    WITH TotalStations AS (
+        SELECT e.code_district, COUNT(e.id) AS total_stations
         FROM disponibilidad d
-        INNER JOIN stations s ON d.id = s.id
-        INNER JOIN TotalStations ts ON s.code_district = ts.code_district
-        WHERE d.light = '0'
-        GROUP BY s.code_district, ts.total_stations
-        ORDER BY s.code_district;
-    """
-    # Executing the query.
-    underpopulated_stations = conn.query(query, ttl="10m")
+        INNER JOIN estaciones e ON d.id = e.id
+        GROUP BY e.code_district
+    )
 
-    # Printing results.
-    st.write(underpopulated_stations)
+    SELECT e.code_district, 
+           COUNT(e.id) AS count_light_0, 
+           ts.total_stations,
+           COUNT(e.id)::float / ts.total_stations AS ratio_light_0
+    FROM disponibilidad d
+    INNER JOIN estaciones e ON d.id = e.id
+    INNER JOIN TotalStations ts ON e.code_district = ts.code_district
+    WHERE d.light = '0'
+    GROUP BY e.code_district, ts.total_stations
+    ORDER BY e.code_district;
+"""
+
+def get_underpopulated_districts():
+    with pool.connect() as conn:
+        results = conn.execute(text(query_ratio_0)).fetchall()
+    districts = [result[0] for result in results]
+    light_counts = [result[1] for result in results]
+    plt.figure(figsize=(10, 6))
+    plt.bar(districts, light_counts, color='skyblue')
+    plt.xlabel('Distrito')
+    plt.ylabel('Estaciones con falta de bicicletas')
+    plt.title('Ratio de estaciones infrapobladas según distrito de Madrid')
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    st.pyplot(plt)
 
 #MAIN
     
@@ -94,4 +116,4 @@ if __name__ == "__main__":
     st.write("Heatmap de estaciones problemáticas por distrito")
     heatmap = get_heatmap()
     st.write("Distritos con falta de bicicletas en las estaciones")
-    ratio_underpopulated()
+    get_underpopulated_districts()
