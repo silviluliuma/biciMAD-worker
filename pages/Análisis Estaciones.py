@@ -85,4 +85,4 @@ def analysis_station(address):
 
 if __name__ == "__main__":
     selectbox_station = st.sidebar.selectbox("Selecciona una estación", list(address_id_dict.keys()))
-    analysis_station(address_id_dict[selectbox_station])
+    st.write(analysis_station(address_id_dict[selectbox_station]))
