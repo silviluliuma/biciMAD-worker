@@ -45,6 +45,7 @@ def get_dictionary_stations():
     return address_id_dict
 
 address_id_dict = get_dictionary_stations()
+st.write(address_id_dict)
 
 def analysis_station(address): #Análisis de las luces de esa estación, sus reservas y su funcionamiento
     conn = psycopg2.connect(**db_params)
