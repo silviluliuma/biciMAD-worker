@@ -127,9 +127,13 @@ def get_districts(light, period):
     plt.figure(figsize=(10, 6))
     plt.bar(districts, light_counts, color='skyblue')
     plt.xlabel('Distrito')
-    plt.ylabel('Estaciones con falta de bicicletas')
-    plt.title('Ratio de estaciones infrapobladas según distrito de Madrid en los últimos dos días')
-    plt.xticks(rotation=45, ha='right')
+    if light == 0:
+        plt.ylabel('Estaciones con falta de bicicletas')
+        plt.title('Ratio de estaciones infrapobladas según distrito de Madrid')
+    else:
+        plt.ylabel('Estaciones con exceso de bicicletas')
+        plt.title('Ratio de estaciones súperpobladas según distrito de Madrid')
+    plt.xticks(rotation=0, ha='right')
     plt.tight_layout()
     st.pyplot(plt) 
     
