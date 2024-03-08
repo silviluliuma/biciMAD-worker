@@ -32,7 +32,7 @@ def get_dictionary_stations():
     conn = psycopg2.connect(**db_params)
     cursor = conn.cursor()
     query = """
-    SELECT DISTINCT name, id
+    SELECT DISTINCT address, id
     FROM estaciones;
     """
     cursor.execute(query)
