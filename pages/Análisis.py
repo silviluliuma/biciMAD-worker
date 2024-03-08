@@ -93,7 +93,7 @@ def get_districts(light, period):
         SELECT e.code_district, 
             COUNT(e.id) AS count_light_{}, 
             ts.total_stations,
-            CAST((COUNT(e.id) * 100 / ts.total_stations) AS NUMERIC(5, 2)) AS ratio_light_{}
+            COUNT(e.id)::float / ts.total_stations AS ratio_light_{}
         FROM disponibilidad d
         INNER JOIN estaciones e ON d.id = e.id
         INNER JOIN TotalStations ts ON e.code_district = ts.code_district
@@ -124,6 +124,7 @@ def get_districts(light, period):
     conn.close()
     districts = [result[0] for result in results]
     light_counts = [result[1] for result in results]
+    st.write(light_counts)
     plt.figure(figsize=(10, 6))
     plt.bar(districts, light_counts, color='skyblue')
     plt.xlabel('Distrito')
