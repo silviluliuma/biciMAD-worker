@@ -50,34 +50,33 @@ def analysis_station(address): #Análisis de las luces de esa estación, sus res
     conn = psycopg2.connect(**db_params)
     cursor = conn.cursor()
     station_id = address_id_dict.get(address)
-    if station_id is not None:
-        query = """
-            SELECT light, no_available, reservations_count
-            FROM disponibilidad
-            WHERE id = %s;
-        """
-        cursor.execute(query, (station_id,))
-        light_counts = {0: 0, 1: 0, 2: 0}
-        no_available_count = 0
-        reservations_count_ = 0
-        results = cursor.fetchall()
-        for result in results:
-            light = result[0]
-            no_available = result[1]
-            reservations_count = result[2]
-            light_counts[light] += 1
-            if no_available:
-                no_available_count += 1
-            if reservations_count > 0:
-                reservations_count_ += 1
-        cursor.close()
-        conn.close()
-        st.write(f"Estación: {address} (ID: {station_id})")
-        st.write("Veces con luz 0:", light_counts[0])
-        st.write("Veces con luz 1:", light_counts[1])
-        st.write("Veces con luz 2:", light_counts[2])
-        st.write("Veces no disponible:", no_available_count)
-        st.write("Veces con reservas:", reservations_count_)
+    query = """
+        SELECT light, no_available, reservations_count
+        FROM disponibilidad
+        WHERE id = %s;
+    """
+    cursor.execute(query, (station_id,))
+    light_counts = {0: 0, 1: 0, 2: 0}
+    no_available_count = 0
+    reservations_count_ = 0
+    results = cursor.fetchall()
+    for result in results:
+        light = result[0]
+        no_available = result[1]
+        reservations_count = result[2]
+        light_counts[light] += 1
+        if no_available:
+            no_available_count += 1
+        if reservations_count > 0:
+            reservations_count_ += 1
+    cursor.close()
+    conn.close()
+    st.write(f"Estación: {address} (ID: {station_id})")
+    st.write("Veces con luz 0:", light_counts[0])
+    st.write("Veces con luz 1:", light_counts[1])
+    st.write("Veces con luz 2:", light_counts[2])
+    st.write("Veces no disponible:", no_available_count)
+    st.write("Veces con reservas:", reservations_count_)
 
 # MAIN
 
