@@ -93,7 +93,7 @@ def get_districts(light, period):
         SELECT e.code_district, 
             COUNT(e.id) AS count_light_{}, 
             ts.total_stations,
-            COUNT(e.id)::float / ts.total_stations AS ratio_light_{}
+            ROUND(COUNT(e.id)::float / ts.total_stations * 100, 0) AS ratio_light_{}
         FROM disponibilidad d
         INNER JOIN estaciones e ON d.id = e.id
         INNER JOIN TotalStations ts ON e.code_district = ts.code_district
@@ -132,7 +132,7 @@ def get_districts(light, period):
         plt.title('Ratio de estaciones infrapobladas según distrito de Madrid')
     else:
         plt.ylabel('Estaciones con exceso de bicicletas')
-        plt.title('Ratio de estaciones súperpobladas según distrito de Madrid')
+        plt.title('Ratio de estaciones sobrepobladas según distrito de Madrid')
     plt.xticks(rotation=0, ha='right')
     plt.tight_layout()
     st.pyplot(plt) 
