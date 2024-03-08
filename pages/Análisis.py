@@ -93,7 +93,7 @@ def get_districts(light, period):
         SELECT e.code_district, 
             COUNT(e.id) AS count_light_{}, 
             ts.total_stations,
-            CAST((COUNT(e.id) / ts.total_stations) AS INT) AS ratio_light_{}
+            CAST((COUNT(e.id) * 100 / ts.total_stations) AS NUMERIC(5, 2)) AS ratio_light_{}
         FROM disponibilidad d
         INNER JOIN estaciones e ON d.id = e.id
         INNER JOIN TotalStations ts ON e.code_district = ts.code_district
