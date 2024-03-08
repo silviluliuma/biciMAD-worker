@@ -78,9 +78,6 @@ def analysis_station(address): #Análisis de las luces de esa estación, sus res
         st.write("Veces con luz 2:", light_counts[2])
         st.write("Veces no disponible:", no_available_count)
         st.write("Veces con reservas:", reservations_count_)
-        st.write(results)
-    else:
-        print("La dirección proporcionada no se corresponde con ninguna estación.")
 
 # MAIN
 
