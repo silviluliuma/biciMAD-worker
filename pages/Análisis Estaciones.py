@@ -50,7 +50,7 @@ st.write(address_id_dict)
 def analysis_station(address): #Análisis de las luces de esa estación, sus reservas y su funcionamiento
     conn = psycopg2.connect(**db_params)
     cursor = conn.cursor()
-    station_id = address_id_dict.get(address)
+    station_id = address_id_dict[address]
     query = """
         SELECT light, no_available, reservations_count
         FROM disponibilidad
