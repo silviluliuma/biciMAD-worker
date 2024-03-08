@@ -46,7 +46,7 @@ def get_dictionary_stations():
 
 address_id_dict = get_dictionary_stations()
 
-def analysis_station(address):
+def analysis_station(address): #Análisis de las luces de esa estación, sus reservas y su funcionamiento
     conn = psycopg2.connect(**db_params)
     cursor = conn.cursor()
     station_id = address_id_dict.get(address)
@@ -80,9 +80,10 @@ def analysis_station(address):
         st.write("Veces con reservas:", reservations_count_)
     else:
         print("La dirección proporcionada no se corresponde con ninguna estación.")
+    st.write(results)
 
 # MAIN
 
 if __name__ == "__main__":
     selectbox_station = st.sidebar.selectbox("Selecciona una estación", list(address_id_dict.keys()))
-    st.write(analysis_station(address_id_dict[selectbox_station]))
+    analysis_station(address_id_dict[selectbox_station])
