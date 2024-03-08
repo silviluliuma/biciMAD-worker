@@ -120,11 +120,10 @@ def get_districts(light, period):
 
     cursor.execute(query)
     results = cursor.fetchall()
-    st.write(results)
     cursor.close()
     conn.close()
     districts = [result[0] for result in results]
-    light_counts = [result[1] for result in results]
+    light_counts = [result[3] for result in results]
     plt.figure(figsize=(10, 6))
     plt.bar(districts, light_counts, color='skyblue')
     plt.xlabel('Distrito')
