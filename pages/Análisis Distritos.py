@@ -136,7 +136,7 @@ def get_districts(light, period):
         plt.title('Ratio de estaciones sobrepobladas según distrito de Madrid')
     plt.xticks(rotation=0, ha='right')
     plt.tight_layout()
-    return plt 
+    st.pyplot(plt) 
     
 #MAIN
     
