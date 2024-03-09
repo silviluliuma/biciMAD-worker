@@ -144,8 +144,7 @@ if __name__ == "__main__":
     if st.sidebar.button("Actualizar datos"):
         st.session_state.heatmap = get_stations()
     st.write("Heatmap de estaciones problemáticas por distrito")
-    plot = get_districts(light, period)
-    st.pyplot(plot)
+    st.pyplot(get_districts())
     select_box_query = st.sidebar.selectbox("Seleccione el gráfico que desea visualizar", ["Estaciones infrapobladas", "Estaciones sobrepobladas"], index=0)
     select_box_period = st.sidebar.selectbox("Seleccione el período a analizar", ["1 Día", "2 Días", "Semana", "Histórico"])
     period_mapping = {
@@ -156,7 +155,7 @@ if __name__ == "__main__":
     }
     light = 0 if select_box_query == "Estaciones infrapobladas" else 1
     period_hours = period_mapping[select_box_period]
-    get_districts(light, period_hours)
+    districts = get_districts(light, period_hours)
 
 
         
