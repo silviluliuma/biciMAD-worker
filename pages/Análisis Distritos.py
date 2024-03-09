@@ -88,9 +88,7 @@ def get_districts(light, period):
         interval = '48 HOURS'
     elif period == 7:
         interval = '7 DAYS'
-    elif period == 100:
-        interval = None
-    else:
+    elif period == 20:
         interval = None
 
     if interval:
@@ -153,23 +151,17 @@ if __name__ == "__main__":
     heatmap = get_heatmap()
     select_box_query = st.sidebar.selectbox("Seleccione el gráfico que desea visualizar", ["Estaciones infrapobladas", "Estaciones sobrepobladas"], index=0)
     select_box_period = st.sidebar.selectbox("Seleccione el período a analizar", ["1 Día", "2 Días", "Semana", "Histórico"])
-    
     period_mapping = {
         "1 Día": 1,
         "2 Días": 2,
         "Semana": 7,
-        "Histórico": 100
+        "Histórico": 20
     }
-    
     if select_box_query == "Estaciones infrapobladas":
         light = 0
     elif select_box_query == "Estaciones sobrepobladas":
         light = 1
-
     period = period_mapping.get(select_box_period, None)
-
     if period is not None:
         get_districts(light, period)
-
-
         
