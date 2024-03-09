@@ -159,22 +159,22 @@ def get_districts(light, period):
             GROUP BY e.code_district, ts.total_stations
             ORDER BY e.code_district;"""
 
-        cursor.execute(query)
-        results = cursor.fetchall()
-        cursor.close()
-        conn.close()
+    cursor.execute(query)
+    results = cursor.fetchall()
+    cursor.close()
+    conn.close()
 
-        districts = [result[0] for result in results]
-        light_counts = [result[1] for result in results]
-        plt.figure(figsize=(10, 6))
-        plt.bar(districts, light_counts, color='skyblue')
-        plt.xlabel('Distrito')
-        plt.ylabel('Estaciones con falta de bicicletas' if light == 0 else 'Estaciones súperpobladas')
-        plt.title(f'Ratio de estaciones {"infrapobladas" if light == 0 else "súperpobladas"} según distrito de Madrid en los últimos {interval.lower()}')
-        plt.xticks(rotation=45, ha='right')
-        plt.tight_layout()
-        plt.show()
-        st.pyplot(plt)
+    districts = [result[0] for result in results]
+    light_counts = [result[1] for result in results]
+    plt.figure(figsize=(10, 6))
+    plt.bar(districts, light_counts, color='skyblue')
+    plt.xlabel('Distrito')
+    plt.ylabel('Estaciones con falta de bicicletas' if light == 0 else 'Estaciones súperpobladas')
+    plt.title(f'Ratio de estaciones {"infrapobladas" if light == 0 else "súperpobladas"} según distrito de Madrid en los últimos {interval.lower()}')
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    plt.show()
+    st.pyplot(plt)
 
 #MAIN
 
