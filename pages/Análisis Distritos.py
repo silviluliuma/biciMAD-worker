@@ -87,97 +87,63 @@ def get_districts(light, period):
     conn = psycopg2.connect(**db_params)
     cursor = conn.cursor()
 
+    query = """
+        WITH TotalStations AS (
+            SELECT e.code_district, COUNT(e.id) AS total_stations
+            FROM disponibilidad d
+            INNER JOIN estaciones e ON d.id = e.id
+            WHERE TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH24:MI:SS') >= NOW() - INTERVAL '{}'
+            GROUP BY e.code_district
+        )
+        SELECT e.code_district, 
+            COUNT(e.id) AS count_light_{}, 
+            ts.total_stations,
+            COUNT(e.id)::float / ts.total_stations AS ratio_light_{}
+        FROM disponibilidad d
+        INNER JOIN estaciones e ON d.id = e.id
+        INNER JOIN TotalStations ts ON e.code_district = ts.code_district
+        WHERE d.light = '{}'
+            AND TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH24:MI:SS') >= NOW() - INTERVAL '{}'
+        GROUP BY e.code_district, ts.total_stations
+        ORDER BY e.code_district;
+    """
+    if light == 0:
+        light_value = '0'
+    else:
+        light_value = '1'
+
     if period == 1:
         interval = '24 HOURS'
     elif period == 2:
         interval = '48 HOURS'
     elif period == 7:
         interval = '7 DAYS'
-    elif period == 20:
-        interval = None
-
-    if interval:
-        with_total_stations_query = f"""
-            WITH TotalStations AS (
-                SELECT e.code_district, COUNT(e.id) AS total_stations
-                FROM disponibilidad d
-                INNER JOIN estaciones e ON d.id = e.id
-                WHERE TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH24:MI:SS') >= NOW() - INTERVAL '{interval}' 
-                GROUP BY e.code_district
-                ORDER BY e.code_district
-            )"""
-
-        if light == 0:
-            light_condition = "AND d.light = '0'"
-        elif light == 1:
-            light_condition = "AND d.light = '1'"
-        else:
-            light_condition = ""
-
-        query = f"""
-            {with_total_stations_query}
-            SELECT e.code_district, 
-                COUNT(e.id) AS count_light_{light}, 
-                ts.total_stations,
-                COUNT(e.id)::float / ts.total_stations AS ratio_light_{light}
-            FROM disponibilidad d
-            INNER JOIN estaciones e ON d.id = e.id
-            INNER JOIN TotalStations ts ON e.code_district = ts.code_district
-            WHERE 1=1
-                {light_condition}
-                AND TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH24:MI:SS') >= NOW() - INTERVAL '{interval}'
-            GROUP BY e.code_district, ts.total_stations
-            ORDER BY e.code_district;"""
     else:
-        with_total_stations_query = f"""
-            WITH TotalStations AS (
-                SELECT e.code_district, COUNT(e.id) AS total_stations
-                FROM disponibilidad d
-                INNER JOIN estaciones e ON d.id = e.id
-                GROUP BY e.code_district
-                ORDER BY e.code_district
-            )"""
+        interval = '100 DAYS'
 
-        if light == 0:
-            light_condition = "AND d.light = '0'"
-        elif light == 1:
-            light_condition = "AND d.light = '1'"
-        else:
-            light_condition = ""
-
-        query = f"""
-            {with_total_stations_query}
-            SELECT e.code_district, 
-                COUNT(e.id) AS count_light_{light}, 
-                ts.total_stations,
-                COUNT(e.id)::float / ts.total_stations AS ratio_light_{light}
-            FROM disponibilidad d
-            INNER JOIN estaciones e ON d.id = e.id
-            INNER JOIN TotalStations ts ON e.code_district = ts.code_district
-            WHERE 1=1
-                {light_condition}
-            GROUP BY e.code_district, ts.total_stations
-            ORDER BY e.code_district;"""
+    query = query.format(interval, light, light, light_value, interval, light_value)
 
     cursor.execute(query)
     results = cursor.fetchall()
     cursor.close()
     conn.close()
-
     districts = [result[0] for result in results]
-    light_counts = [result[1] for result in results]
+    light_counts = [result[3] for result in results]
     plt.figure(figsize=(10, 6))
     plt.bar(districts, light_counts, color='skyblue')
     plt.xlabel('Distrito')
-    plt.ylabel('Estaciones con falta de bicicletas' if light == 0 else 'Estaciones súperpobladas')
-    plt.title(f'Ratio de estaciones {"infrapobladas" if light == 0 else "súperpobladas"} según distrito de Madrid en los últimos {interval.lower()}')
-    plt.xticks(rotation=45, ha='right')
+    if light == 0:
+        plt.ylabel('Estaciones con falta de bicicletas')
+        plt.title('Ratio de estaciones infrapobladas según distrito de Madrid')
+    else:
+        plt.ylabel('Estaciones con exceso de bicicletas')
+        plt.title('Ratio de estaciones sobrepobladas según distrito de Madrid')
+    plt.xticks(rotation=0, ha='right')
     plt.tight_layout()
-    plt.show()
-    st.pyplot(plt)
-
+    st.pyplot(plt) 
+    
 #MAIN
-
+    
 if __name__ == "__main__":
     if st.sidebar.button("Actualizar datos"):
         st.session_state.heatmap = get_stations()
@@ -186,16 +152,12 @@ if __name__ == "__main__":
     select_box_query = st.sidebar.selectbox("Seleccione el gráfico que desea visualizar", ["Estaciones infrapobladas", "Estaciones sobrepobladas"], index=0)
     select_box_period = st.sidebar.selectbox("Seleccione el período a analizar", ["1 Día", "2 Días", "Semana", "Histórico"])
     period_mapping = {
-        "1 Día": 1,
-        "2 Días": 2,
-        "Semana": 7,
-        "Histórico": 20
+    "1 Día": 1,
+    "2 Días": 2,
+    "Semana": 7,
+    "Histórico": 100
     }
-    if select_box_query == "Estaciones infrapobladas":
-        light = 0
-    elif select_box_query == "Estaciones sobrepobladas":
-        light = 1
-    period = period_mapping.get(select_box_period, None)
-    if period is not None:
-        get_districts(light, period)
+    light = 0 if select_box_query == "Estaciones infrapobladas" else 1
+    period_hours = period_mapping[select_box_period]
+    get_districts(light, period_hours)
         
