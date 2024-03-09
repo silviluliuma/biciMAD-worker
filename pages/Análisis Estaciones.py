@@ -51,7 +51,6 @@ def analysis_station(address): #Análisis de las luces de esa estación, sus res
     conn = psycopg2.connect(**db_params)
     cursor = conn.cursor()
     station_id = address_id_dict[address]
-    st.write(station_id)
     query = """
         SELECT light, no_available, reservations_count
         FROM disponibilidad
@@ -74,9 +73,9 @@ def analysis_station(address): #Análisis de las luces de esa estación, sus res
     cursor.close()
     conn.close()
     st.write(f"Estación: {address} (ID: {station_id})")
-    st.write("Veces con luz 0:", light_counts[0])
-    st.write("Veces con luz 1:", light_counts[1])
-    st.write("Veces con luz 2:", light_counts[2])
+    st.write("Veces con luz 0 (falta de bicicletas):", light_counts[0])
+    st.write("Veces con luz 1 (exceso de bicicletas):", light_counts[1])
+    st.write("Veces con luz 2 (número correcto de bicicletas):", light_counts[2])
     st.write("Veces no disponible:", no_available_count)
     st.write("Veces con reservas:", reservations_count_)
 

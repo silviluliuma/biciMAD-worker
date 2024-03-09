@@ -87,7 +87,7 @@ def get_districts(light, period):
             SELECT e.code_district, COUNT(e.id) AS total_stations
             FROM disponibilidad d
             INNER JOIN estaciones e ON d.id = e.id
-            WHERE TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH24:MI:SS') >= NOW() - INTERVAL '{} {}'
+            WHERE TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH24:MI:SS') >= NOW() - INTERVAL '{}'
             GROUP BY e.code_district
         )
         SELECT e.code_district, 
@@ -98,7 +98,7 @@ def get_districts(light, period):
         INNER JOIN estaciones e ON d.id = e.id
         INNER JOIN TotalStations ts ON e.code_district = ts.code_district
         WHERE d.light = '{}'
-            AND TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH24:MI:SS') >= NOW() - INTERVAL '{} {}'
+            AND TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH24:MI:SS') >= NOW() - INTERVAL '{}'
         GROUP BY e.code_district, ts.total_stations
         ORDER BY e.code_district;
     """
@@ -116,7 +116,7 @@ def get_districts(light, period):
     else:
         interval = '100 DAYS'
 
-    query = query.format(interval, light_value, light, light, light_value, interval, light_value)
+    query = query.format(interval, light, light, light, interval)
 
     cursor.execute(query)
     results = cursor.fetchall()
