@@ -148,10 +148,10 @@ if __name__ == "__main__":
     select_box_query = st.sidebar.selectbox("Seleccione el gráfico que desea visualizar", ["Estaciones infrapobladas", "Estaciones sobrepobladas"], index=0)
     select_box_period = st.sidebar.selectbox("Seleccione el período a analizar", ["1 Día", "2 Días", "Semana", "Histórico"])
     period_mapping = {
-    "1 Día": 24,
-    "2 Días": 48,
-    "Semana": 7 * 24,
-    "Histórico": 100 * 24
+    "1 Día": 1,
+    "2 Días": 2,
+    "Semana": 7,
+    "Histórico": 100
     }
     light = 0 if select_box_query == "Estaciones infrapobladas" else 1
     period_hours = period_mapping[select_box_period]
