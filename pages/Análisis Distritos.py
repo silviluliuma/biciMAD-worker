@@ -39,7 +39,11 @@ def get_stations(): #Usar el token para acceder a la información en tiempo real
     json_data = response.json()
     stations_real_time = pd.DataFrame(json_data["data"])
     stations_real_time[["longitude", "latitude"]] = stations_real_time["geometry"].apply(lambda x: pd.Series(x["coordinates"]))
-    stations_real_time = stations_real_time.drop(["geofence", "activate", "geometry", "integrator", "reservations_count", "no_available", "tipo_estacionPBSC", "virtualDelete", "virtual_bikes", "virtual_bikes_num", "code_suburb", "geofenced_capacity", "bikesGo"], axis=1)
+    stations_real_time = stations_real_time.drop(["geofence", 
+                                                  "activate", 
+                                                  "geometry", 
+                                                  "integrator", 
+                                                  "reservations_count", "no_available", "tipo_estacionPBSC", "virtualDelete", "virtual_bikes", "virtual_bikes_num", "code_suburb", "geofenced_capacity", "bikesGo"], axis=1)
     stations_real_time['coordinates'] = list(zip(stations_real_time['longitude'], stations_real_time['latitude']))
     return stations_real_time
 
@@ -77,6 +81,7 @@ db_params = {
     "host": st.secrets["google_cloud_ip"],
     "port": 5432  # El puerto predeterminado para PostgreSQL es 5432
 }
+
 
 def get_districts(light, period):
     conn = psycopg2.connect(**db_params)
@@ -123,6 +128,36 @@ def get_districts(light, period):
                 AND TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH24:MI:SS') >= NOW() - INTERVAL '{interval}'
             GROUP BY e.code_district, ts.total_stations
             ORDER BY e.code_district;"""
+    else:
+        with_total_stations_query = f"""
+            WITH TotalStations AS (
+                SELECT e.code_district, COUNT(e.id) AS total_stations
+                FROM disponibilidad d
+                INNER JOIN estaciones e ON d.id = e.id
+                GROUP BY e.code_district
+                ORDER BY e.code_district
+            )"""
+
+        if light == 0:
+            light_condition = "AND d.light = '0'"
+        elif light == 1:
+            light_condition = "AND d.light = '1'"
+        else:
+            light_condition = ""
+
+        query = f"""
+            {with_total_stations_query}
+            SELECT e.code_district, 
+                COUNT(e.id) AS count_light_{light}, 
+                ts.total_stations,
+                COUNT(e.id)::float / ts.total_stations AS ratio_light_{light}
+            FROM disponibilidad d
+            INNER JOIN estaciones e ON d.id = e.id
+            INNER JOIN TotalStations ts ON e.code_district = ts.code_district
+            WHERE 1=1
+                {light_condition}
+            GROUP BY e.code_district, ts.total_stations
+            ORDER BY e.code_district;"""
 
         cursor.execute(query)
         results = cursor.fetchall()
@@ -140,7 +175,6 @@ def get_districts(light, period):
         plt.tight_layout()
         plt.show()
         st.pyplot(plt)
-
 
 #MAIN
 
