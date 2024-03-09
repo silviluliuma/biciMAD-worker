@@ -116,7 +116,7 @@ def get_districts(light, period):
     else:
         interval = '100 DAYS'
 
-    query = query.format(interval, light, light, light, interval)
+    query = query.format(interval, light_value, light_value, light_value, light_value)
 
     cursor.execute(query)
     results = cursor.fetchall()
