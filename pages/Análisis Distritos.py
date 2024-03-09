@@ -89,6 +89,7 @@ def get_districts(light, period):
             INNER JOIN estaciones e ON d.id = e.id
             WHERE TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH24:MI:SS') >= NOW() - INTERVAL '{}'
             GROUP BY e.code_district
+            ORDER BY e.code_district
         )
         SELECT e.code_district, 
             COUNT(e.id) AS count_light_{}, 
@@ -135,7 +136,7 @@ def get_districts(light, period):
         plt.title('Ratio de estaciones sobrepobladas según distrito de Madrid')
     plt.xticks(rotation=0, ha='right')
     plt.tight_layout()
-    st.pyplot(plt) 
+    return plt 
     
 #MAIN
     
@@ -143,7 +144,7 @@ if __name__ == "__main__":
     if st.sidebar.button("Actualizar datos"):
         st.session_state.heatmap = get_stations()
     st.write("Heatmap de estaciones problemáticas por distrito")
-    heatmap = get_heatmap()
+    st.pyplot(get_districts())
     select_box_query = st.sidebar.selectbox("Seleccione el gráfico que desea visualizar", ["Estaciones infrapobladas", "Estaciones sobrepobladas"], index=0)
     select_box_period = st.sidebar.selectbox("Seleccione el período a analizar", ["1 Día", "2 Días", "Semana", "Histórico"])
     period_mapping = {
