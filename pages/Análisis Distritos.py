@@ -136,7 +136,7 @@ def get_districts(light, period):
         plt.title('Ratio de estaciones sobrepobladas según distrito de Madrid')
     plt.xticks(rotation=0, ha='right')
     plt.tight_layout()
-    st.pyplot() 
+    st.pyplot(plt) 
     
 #MAIN
     
@@ -155,7 +155,7 @@ if __name__ == "__main__":
     }
     light = 0 if select_box_query == "Estaciones infrapobladas" else 1
     period_hours = period_mapping[select_box_period]
-    districts = get_districts(light, period_hours)
+    get_districts(light, period_hours)
 
 
         
