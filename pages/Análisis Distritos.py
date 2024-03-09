@@ -154,8 +154,8 @@ if __name__ == "__main__":
     "Histórico": 100
     }
     light = 0 if select_box_query == "Estaciones infrapobladas" else 1
-    period_hours = period_mapping[select_box_period]
-    get_districts(light, period_hours)
+    period = period_mapping[select_box_period]
+    get_districts(light, period)
 
 
         
