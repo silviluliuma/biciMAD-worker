@@ -109,8 +109,10 @@ def get_districts(light, period):
     """
     if light == 0:
         light_value = '0'
-    else:
+    elif light == 1:
         light_value = '1'
+    else:
+        light_value = '2'
 
     if period == 1:
         interval = '24 HOURS'
@@ -160,4 +162,5 @@ if __name__ == "__main__":
     light = 0 if select_box_query == "Estaciones infrapobladas" else 1
     period_hours = period_mapping[select_box_period]
     get_districts(light, period_hours)
-        
+    st.write("Ratio de estaciones con un número óptimo de bicicletas")
+    get_districts(2, period_hours)
