@@ -137,9 +137,12 @@ def get_districts(light, period):
     if light == 0:
         plt.ylabel('Estaciones con falta de bicicletas')
         plt.title('Ratio de estaciones infrapobladas según distrito de Madrid')
-    else:
+    elif light == 1:
         plt.ylabel('Estaciones con exceso de bicicletas')
         plt.title('Ratio de estaciones sobrepobladas según distrito de Madrid')
+    else:
+        plt.ylabel('Estaciones con un número óptimo de bicicletas')
+        plt.title('Ratio de estaciones con número óptimo de bicicletas según distrito de Madrid')
     plt.xticks(rotation=0, ha='right')
     plt.tight_layout()
     st.pyplot(plt) 
@@ -162,5 +165,4 @@ if __name__ == "__main__":
     light = 0 if select_box_query == "Estaciones infrapobladas" else 1
     period_hours = period_mapping[select_box_period]
     get_districts(light, period_hours)
-    st.write("Ratio de estaciones con un número óptimo de bicicletas")
     get_districts(2, period_hours)
