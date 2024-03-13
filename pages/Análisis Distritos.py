@@ -75,6 +75,7 @@ def get_heatmap():
 }
     problematic_stations = get_problematic_stations()
     plt.figure(figsize=(10, 6))
+    plt.xticks(ticks=[0, 1], labels=['Estaciones con falta de bicicletas', 'Estaciones con exceso de bicicletas'])
     sns.heatmap(get_problematic_stations(), cmap='Reds', annot=True, fmt='g', linewidths=.5)
     labels = [f"{district_dict[code]} ({code})" for code in problematic_stations.index]
     plt.yticks(ticks=range(len(problematic_stations.index)), labels=labels, rotation=0)
@@ -162,7 +163,7 @@ if __name__ == "__main__":
     if st.sidebar.button("Actualizar datos"):
         st.session_state.heatmap = get_stations()
     heatmap = get_heatmap()
-    select_box_query = st.sidebar.selectbox("Seleccione el gráfico que desea visualizar", ["Estaciones con falta de bicicletas", "Estaciones con exceso de bicicletas"], index=0)
+    select_box_query = st.sidebar.selectbox("Seleccione el gráfico que desea visualizar", ["Estaciones con falta de bicicletas", "Estaciones con exceso de bicicletas", "Estaciones con un nivel adecuado de bicicletas"], index=0)
     select_box_period = st.sidebar.selectbox("Seleccione el período a analizar", ["1 Día", "2 Días", "Semana", "Histórico"])
     period_mapping = {
     "1 Día": 1,
@@ -170,7 +171,11 @@ if __name__ == "__main__":
     "Semana": 7,
     "Histórico": 100
     }
-    light = 0 if select_box_query == "Estaciones con falta de bicicletas" else 1
+    if select_box_query == "Estaciones con falta de bicicletas":
+        light = 0
+    elif select_box_query == "Estaciones con exceso de bicicletas":
+        light = 1
+    else:
+        light = 2
     period_hours = period_mapping[select_box_period]
     get_districts(light, period_hours)
-    get_districts(2, period_hours)
