@@ -75,7 +75,7 @@ def get_heatmap():
 }
     problematic_stations = get_problematic_stations()
     plt.figure(figsize=(10, 6))
-    sns.heatmap(get_problematic_stations(), cmap='RdBu', annot=True, fmt='g', linewidths=.5)
+    sns.heatmap(get_problematic_stations(), cmap='Reds', annot=True, fmt='g', linewidths=.5)
     labels = [f"{district_dict[code]} ({code})" for code in problematic_stations.index]
     plt.yticks(ticks=range(len(problematic_stations.index)), labels=labels, rotation=0)
     plt.title('Estaciones que necesitan revisión en cada distrito')
@@ -114,7 +114,7 @@ def get_districts(light, period):
         WHERE d.light = '{}'
             AND TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH24:MI:SS') >= NOW() - INTERVAL '{}'
         GROUP BY e.code_district, ts.total_stations
-        ORDER BY e.code_district;
+        ORDER BY ratio_light_{};
     """
     if light == 0:
         light_value = '0'
