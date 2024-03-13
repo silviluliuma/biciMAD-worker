@@ -57,7 +57,7 @@ def analysis_station(address): #Análisis de las luces de esa estación, sus res
         WHERE id = %s;
     """
     cursor.execute(query, (station_id,))
-    light_counts = {0: 0, 1: 0, 2: 0}
+    light_counts = {0: 0, 1: 0, 2: 0, 3: 0}
     no_available_count = 0
     reservations_count_ = 0
     results = cursor.fetchall()
