@@ -88,19 +88,18 @@ def no_available():
     cursor = conn.cursor()
     query = """
     SELECT 
-        d.id AS estación, 
+        e.name AS estación, 
         SUM(d.no_available) AS veces_no_disponible, 
         e.code_district AS distrito
     FROM disponibilidad d
     JOIN estaciones e ON d.id = e.id 
     WHERE d.no_available = 1
-    GROUP BY d.id, e.code_district"""
+    GROUP BY e.name, e.code_district"""
     cursor.execute(query)
     results = cursor.fetchall()
     cursor.close()
     conn.close()
     df = pd.DataFrame(results, columns=['Estación', 'Veces No Disponible', 'Distrito'])
-    df['Estación'] = df['Estación'].astype(int)
     return df
 
 # MAIN
