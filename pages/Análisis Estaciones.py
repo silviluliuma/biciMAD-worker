@@ -52,7 +52,9 @@ def analysis_station(address): #Análisis de las luces de esa estación, sus res
     cursor = conn.cursor()
     station_id = address_id_dict[address]
     query = """
-        SELECT light, no_available, reservations_count
+        SELECT light, 
+        no_available,
+        reservations_count
         FROM disponibilidad
         WHERE id = %s;
     """
@@ -90,6 +92,7 @@ def no_available():
     query = """
     SELECT 
         e.address AS estación, 
+        COUNT(e.address) AS veces_registrada
         SUM(d.no_available) AS veces_no_disponible, 
         e.code_district AS distrito
     FROM disponibilidad d
@@ -100,7 +103,7 @@ def no_available():
     results = cursor.fetchall()
     cursor.close()
     conn.close()
-    df = pd.DataFrame(results, columns=['Estación', 'Veces No Disponible', 'Distrito'])
+    df = pd.DataFrame(results, columns=['Estación', 'Veces registrada', 'Veces No Disponible', 'Distrito'])
     return df
 
 # MAIN
@@ -109,5 +112,5 @@ if __name__ == "__main__":
     selectbox_station = st.sidebar.selectbox("Selecciona una estación", list(address_id_dict.keys()))
     st.write("Datos sobre la estación seleccionada:")
     st.write(analysis_station(selectbox_station))
-    st.write("Estaciones que no han estado disponibles en el período seleccionado:")
+    st.write("Estaciones que no han estado disponibles:")
     st.write(no_available())
