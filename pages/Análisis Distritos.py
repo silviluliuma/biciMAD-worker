@@ -67,22 +67,23 @@ def get_problematic_stations():
 
 def get_heatmap():
     district_dict = {
-    '01': 'Centro', '02': 'Arganzuela', '03': 'Retiro', '04': 'Salamanca', '05': 'Chamartín',
-    '06': 'Tetuán', '07': 'Chamberí', '08': 'Fuencarral-El Pardo', '09': 'Moncloa-Aravaca',
-    '10': 'Latina', '11': 'Carabanchel', '12': 'Usera', '13': 'Puente de Vallecas',
-    '14': 'Moratalaz', '15': 'Ciudad Lineal', '16': 'Hortaleza', '17': 'Villaverde',
-    '18': 'Villa de Vallecas', '19': 'Vicálvaro', '20': 'San Blas-Canillejas', '21': 'Barajas'
-}
+        '01': 'Centro', '02': 'Arganzuela', '03': 'Retiro', '04': 'Salamanca', '05': 'Chamartín',
+        '06': 'Tetuán', '07': 'Chamberí', '08': 'Fuencarral-El Pardo', '09': 'Moncloa-Aravaca',
+        '10': 'Latina', '11': 'Carabanchel', '12': 'Usera', '13': 'Puente de Vallecas',
+        '14': 'Moratalaz', '15': 'Ciudad Lineal', '16': 'Hortaleza', '17': 'Villaverde',
+        '18': 'Villa de Vallecas', '19': 'Vicálvaro', '20': 'San Blas-Canillejas', '21': 'Barajas'
+    }
     problematic_stations = get_problematic_stations()
     plt.figure(figsize=(10, 6))
     plt.xticks(ticks=[0, 1], labels=['Estaciones con falta de bicicletas', 'Estaciones con exceso de bicicletas'])
-    sns.heatmap(get_problematic_stations(), cmap='Reds', annot=True, fmt='g', linewidths=.5)
+    sns.heatmap(problematic_stations, cmap='RdBu', annot=True, fmt='g', linewidths=.5)
     labels = [f"{district_dict[code]} ({code})" for code in problematic_stations.index]
     plt.yticks(ticks=range(len(problematic_stations.index)), labels=labels, rotation=0)
     plt.title('Estaciones que necesitan revisión en cada distrito')
     plt.xlabel('Luz')
     plt.ylabel('Distrito')
     st.pyplot()
+get_heatmap()
 
 db_params = {
     "dbname": "bicimad_worker",
