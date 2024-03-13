@@ -106,11 +106,27 @@ def no_available():
     df = pd.DataFrame(results, columns=['Estación', 'Veces registrada', 'Veces No Disponible', 'Distrito'])
     return df
 
+def reservation_count():
+    conn = psycopg2.connect(**db_params)
+    cursor = conn.cursor()
+    query = """
+    SELECT DISTINCT(reservations_count) AS reservas
+    FROM disponibilidad
+    """
+    cursor.execute(query)
+    results = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    df = pd.DataFrame(results, columns=['Veces que se ha realizado una reserva de biciletas'])
+    return df
+
 # MAIN
 
 if __name__ == "__main__":
     selectbox_station = st.sidebar.selectbox("Selecciona una estación", list(address_id_dict.keys()))
     st.write("Datos sobre la estación seleccionada:")
     st.write(analysis_station(selectbox_station))
-    st.write("Estaciones que no han estado disponibles:")
+    st.write("Estaciones que no disponibles:")
     st.write(no_available())
+    st.write("Veces que se ha realizado una reserva de bicicleta en las estaciones de biciMAD")
+    st.write(reservation_count())
