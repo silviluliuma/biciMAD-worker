@@ -114,7 +114,7 @@ def get_districts(light, period):
         WHERE d.light = '{}'
             AND TO_TIMESTAMP(d.last_updated, 'YYYY-MM-DD HH24:MI:SS') >= NOW() - INTERVAL '{}'
         GROUP BY e.code_district, ts.total_stations
-        ORDER BY ratio_light_{};
+        ORDER BY ratio_light_{} DESC;
     """
     if light == 0:
         light_value = '0'
