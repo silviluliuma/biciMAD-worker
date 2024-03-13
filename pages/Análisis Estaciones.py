@@ -74,9 +74,10 @@ def analysis_station(address): #Análisis de las luces de esa estación, sus res
     conn.close()
 
     data = {
-        "Veces con luz 0 (falta de bicicletas)": [light_counts[0]],
-        "Veces con luz 1 (exceso de bicicletas)": [light_counts[1]],
-        "Veces con luz 2 (número correcto de bicicletas)": [light_counts[2]],
+        "Veces con falta de bicicletas": [light_counts[0]],
+        "Veces con exceso de bicicletas": [light_counts[1]],
+        "Veces con un número adecuado de bicicletas": [light_counts[2]],
+        "Veces con un número desconocido de bicicletas": [light_counts[3]],
         "Veces no disponible": [no_available_count],
         "Veces con reservas": [reservations_count_]
     }
