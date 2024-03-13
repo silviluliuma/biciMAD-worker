@@ -88,7 +88,7 @@ def no_available():
     cursor = conn.cursor()
     query = """
     SELECT 
-        CAST(d.id AS INTEGER) AS estación,
+        d.id AS estación, 
         SUM(d.no_available) AS veces_no_disponible, 
         e.code_district AS distrito
     FROM disponibilidad d
@@ -100,6 +100,7 @@ def no_available():
     cursor.close()
     conn.close()
     df = pd.DataFrame(results, columns=['Estación', 'Veces No Disponible', 'Distrito'])
+    df['Estación'] = df['Estación'].astype(int)
     return df
 
 # MAIN
