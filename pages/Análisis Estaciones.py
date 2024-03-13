@@ -92,7 +92,7 @@ def no_available():
     query = """
     SELECT 
         e.address AS estación, 
-        COUNT(e.address) AS veces_registrada
+        COUNT(e.address) AS veces_registrada,
         SUM(d.no_available) AS veces_no_disponible, 
         e.code_district AS distrito
     FROM disponibilidad d
