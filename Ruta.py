@@ -32,7 +32,20 @@ def get_stations(): #Usar el token para acceder a la información en tiempo real
     json_data = response.json()
     stations_real_time = pd.DataFrame(json_data["data"])
     stations_real_time[["longitude", "latitude"]] = stations_real_time["geometry"].apply(lambda x: pd.Series(x["coordinates"]))
-    stations_real_time = stations_real_time.drop(["geofence", "activate", "geometry", "integrator", "reservations_count", "no_available", "tipo_estacionPBSC", "virtualDelete", "virtual_bikes", "virtual_bikes_num", "code_suburb", "geofenced_capacity", "bikesGo"], axis=1)
+    stations_real_time = stations_real_time.drop(["geofence", 
+                                                  "activate", 
+                                                  "geometry", 
+                                                  "integrator", 
+                                                  "reservations_count", 
+                                                  "no_available", 
+                                                  "tipo_estacionPBSC", 
+                                                  "virtualDelete", 
+                                                  "virtual_bikes", 
+                                                  "virtual_bikes_num", 
+                                                  "code_suburb", 
+                                                  "geofenced_capacity", 
+                                                  "bikesGo"], 
+                                                axis=1)
     stations_real_time['coordinates'] = list(zip(stations_real_time['longitude'], stations_real_time['latitude']))
     return stations_real_time
 

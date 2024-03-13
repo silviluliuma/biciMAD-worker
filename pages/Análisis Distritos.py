@@ -43,7 +43,16 @@ def get_stations(): #Usar el token para acceder a la información en tiempo real
                                                   "activate", 
                                                   "geometry", 
                                                   "integrator", 
-                                                  "reservations_count", "no_available", "tipo_estacionPBSC", "virtualDelete", "virtual_bikes", "virtual_bikes_num", "code_suburb", "geofenced_capacity", "bikesGo"], axis=1)
+                                                  "reservations_count", 
+                                                  "no_available", 
+                                                  "tipo_estacionPBSC", 
+                                                  "virtualDelete", 
+                                                  "virtual_bikes", 
+                                                  "virtual_bikes_num", 
+                                                  "code_suburb", 
+                                                  "geofenced_capacity", 
+                                                  "bikesGo"],
+                                                axis=1)
     stations_real_time['coordinates'] = list(zip(stations_real_time['longitude'], stations_real_time['latitude']))
     return stations_real_time
 
@@ -52,8 +61,8 @@ stations_real_time = get_stations()
 def get_problematic_stations():
     lights_df_sum = stations_real_time.pivot_table(index='code_district', columns='light', aggfunc='size', fill_value=0)
     lights_df_sum = lights_df_sum.drop([2, 3], axis=1)
-    lights_df_sum["Número de estaciones problemáticas"] = lights_df_sum[0] +lights_df_sum[1]
-    lights_df_sum_sorted = lights_df_sum.sort_values(by="Número de estaciones problemáticas", ascending=False)
+    lights_df_sum["Estaciones que necesitan revisión"] = lights_df_sum[0] +lights_df_sum[1]
+    lights_df_sum_sorted = lights_df_sum.sort_values(by="Estaciones que necesitan revisión", ascending=False)
     return lights_df_sum_sorted
 
 def get_heatmap():
@@ -66,10 +75,10 @@ def get_heatmap():
 }
     problematic_stations = get_problematic_stations()
     plt.figure(figsize=(10, 6))
-    sns.heatmap(get_problematic_stations(), cmap='Oranges', annot=True, fmt='g', linewidths=.5)
+    sns.heatmap(get_problematic_stations(), cmap='Reds', annot=True, fmt='g', linewidths=.5)
     labels = [f"{district_dict[code]} ({code})" for code in problematic_stations.index]
     plt.yticks(ticks=range(len(problematic_stations.index)), labels=labels, rotation=0)
-    plt.title('Estaciones problemáticas por distrito')
+    plt.title('Estaciones que necesitan revisión en cada distrito')
     plt.xlabel('Luz')
     plt.ylabel('Distrito')
     st.pyplot()
@@ -136,13 +145,13 @@ def get_districts(light, period):
     plt.xlabel('Distrito')
     if light == 0:
         plt.ylabel('Estaciones con falta de bicicletas')
-        plt.title('Ratio de estaciones infrapobladas según distrito de Madrid')
+        plt.title('Ratio de estaciones con falta de bicicletas según distrito de Madrid')
     elif light == 1:
         plt.ylabel('Estaciones con exceso de bicicletas')
-        plt.title('Ratio de estaciones sobrepobladas según distrito de Madrid')
+        plt.title('Ratio de estaciones con exceso de bicicletas según distrito de Madrid')
     else:
         plt.ylabel('Estaciones con un número óptimo de bicicletas')
-        plt.title('Ratio de estaciones con número óptimo de bicicletas según distrito de Madrid')
+        plt.title('Ratio de estaciones con un nivel adecuado de bicicletas según distrito de Madrid')
     plt.xticks(rotation=0, ha='right')
     plt.tight_layout()
     st.pyplot(plt) 
@@ -152,9 +161,8 @@ def get_districts(light, period):
 if __name__ == "__main__":
     if st.sidebar.button("Actualizar datos"):
         st.session_state.heatmap = get_stations()
-    st.write("Heatmap de estaciones problemáticas por distrito")
     heatmap = get_heatmap()
-    select_box_query = st.sidebar.selectbox("Seleccione el gráfico que desea visualizar", ["Estaciones infrapobladas", "Estaciones sobrepobladas"], index=0)
+    select_box_query = st.sidebar.selectbox("Seleccione el gráfico que desea visualizar", ["Estaciones con falta de bicicletas", "Estaciones con exceso de bicicletas"], index=0)
     select_box_period = st.sidebar.selectbox("Seleccione el período a analizar", ["1 Día", "2 Días", "Semana", "Histórico"])
     period_mapping = {
     "1 Día": 1,
@@ -162,7 +170,7 @@ if __name__ == "__main__":
     "Semana": 7,
     "Histórico": 100
     }
-    light = 0 if select_box_query == "Estaciones infrapobladas" else 1
+    light = 0 if select_box_query == "Estaciones con falta de bicicletas" else 1
     period_hours = period_mapping[select_box_period]
     get_districts(light, period_hours)
     get_districts(2, period_hours)
