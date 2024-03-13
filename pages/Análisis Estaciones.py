@@ -88,13 +88,13 @@ def no_available():
     cursor = conn.cursor()
     query = """
     SELECT 
-        e.name AS estación, 
+        e.address AS estación, 
         SUM(d.no_available) AS veces_no_disponible, 
         e.code_district AS distrito
     FROM disponibilidad d
     JOIN estaciones e ON d.id = e.id 
     WHERE d.no_available = 1
-    GROUP BY e.name, e.code_district"""
+    GROUP BY e.address, e.code_district"""
     cursor.execute(query)
     results = cursor.fetchall()
     cursor.close()
