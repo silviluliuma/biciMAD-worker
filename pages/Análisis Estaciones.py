@@ -88,7 +88,7 @@ def no_available():
     cursor = conn.cursor()
     query = """
     SELECT 
-        d.id AS estación, 
+        CAST(d.id AS INTEGER) AS estación,
         SUM(d.no_available) AS veces_no_disponible, 
         e.code_district AS distrito
     FROM disponibilidad d
@@ -108,5 +108,5 @@ if __name__ == "__main__":
     selectbox_station = st.sidebar.selectbox("Selecciona una estación", list(address_id_dict.keys()))
     st.write("Datos sobre la estación seleccionada:")
     st.write(analysis_station(selectbox_station))
-    st.write("Estaciones que no han estado disponibles")
+    st.write("Estaciones que no han estado disponibles en el período seleccionado:")
     st.write(no_available())
