@@ -72,12 +72,16 @@ def analysis_station(address): #Análisis de las luces de esa estación, sus res
             reservations_count_ += 1
     cursor.close()
     conn.close()
-    st.write(f"Estación: {address} (ID: {station_id})")
-    st.write("Veces con luz 0 (falta de bicicletas):", light_counts[0])
-    st.write("Veces con luz 1 (exceso de bicicletas):", light_counts[1])
-    st.write("Veces con luz 2 (número correcto de bicicletas):", light_counts[2])
-    st.write("Veces no disponible:", no_available_count)
-    st.write("Veces con reservas:", reservations_count_)
+
+    data = {
+        "Veces con luz 0 (falta de bicicletas)": [light_counts[0]],
+        "Veces con luz 1 (exceso de bicicletas)": [light_counts[1]],
+        "Veces con luz 2 (número correcto de bicicletas)": [light_counts[2]],
+        "Veces no disponible": [no_available_count],
+        "Veces con reservas": [reservations_count_]
+    }
+    df = pd.DataFrame(data)
+    return df
 
 def no_available():
     conn = psycopg2.connect(**db_params)
@@ -102,5 +106,7 @@ def no_available():
 
 if __name__ == "__main__":
     selectbox_station = st.sidebar.selectbox("Selecciona una estación", list(address_id_dict.keys()))
-    analysis_station(selectbox_station)
+    st.write("Datos sobre la estación seleccionada:")
+    st.write(analysis_station(selectbox_station))
+    st.write("Estaciones que no han estado disponibles")
     st.write(no_available())
