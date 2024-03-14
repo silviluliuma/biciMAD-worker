@@ -16,7 +16,7 @@ This app utilizes the biciMAD API to gather **real-time information** about bici
 
 The graphical interface built with **Streamlit** enables workers to visualize a heatmap of stations requiring immediate inspection, allowing for sorted options based on this information. Additionally, users can specify whether their van is full or empty, dynamically adjusting the route order of stops accordingly. Furthermore, the interface includes two **analysis** pages (for districts and individual stations) where users can explore station and district statuses over various time periods.
 
-<img width="587" alt="Captura de pantalla 2023-11-22 a las 19 25 08" src="https://github.com/silviluliuma/ih_datamadpt0923_project_m1/assets/138609959/39526901-5afb-4be3-a587-70e537db7455">
+![gardfield](https://github.com/silviluliuma/biciMAD-worker/assets/138609959/dd1ac01f-38c3-413b-8fb4-1fed5da85b70)
 
 
 ## **Technical information**
