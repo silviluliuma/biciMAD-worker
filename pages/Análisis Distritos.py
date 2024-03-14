@@ -98,6 +98,7 @@ def stations_per_district():
     plt.figure(figsize=(10, 6))
     plt.bar(df['Distrito'], df['Número de estaciones'], color='skyblue')
     plt.xlabel("Distrito")
+    plt.xticks(rotation=45, ha='right')
     plt.ylabel("Número de Estaciones")
     plt.title("Número de Estaciones por Distrito")
     st.pyplot(plt)
@@ -146,13 +147,12 @@ def get_districts(light, period):
 
     cursor.execute(query)
     results = cursor.fetchall()
-    results_mapped = [(district_dict[code], num_stations) for code, num_stations in results]
     cursor.close()
     conn.close()
-    districts = [result[0] for result in results_mapped]
-    light_counts = [result[3] for result in results_mapped]
+    results_mapped = [(district_dict[code], count_light, total_stations, ratio_light) for code, count_light, total_stations, ratio_light in results]
+    df = pd.DataFrame(results_mapped, columns=['Distrito', f'Estaciones con luz {light}', 'Total de Estaciones', f'Ratio con luz {light}'])
     plt.figure(figsize=(10, 6))
-    plt.bar(districts, light_counts, color='skyblue')
+    plt.bar(df['Distrito'], df[f'Estaciones con luz {light}'], color='skyblue')
     plt.xlabel('Distrito')
     if light == 0:
         plt.ylabel('Estaciones con falta de bicicletas')
@@ -163,9 +163,9 @@ def get_districts(light, period):
     else:
         plt.ylabel('Estaciones con un número óptimo de bicicletas')
         plt.title('Estaciones con un nivel adecuado de bicicletas según distrito de Madrid')
-    plt.xticks(rotation=0, ha='right')
+    plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
-    st.pyplot(plt) 
+    st.pyplot(plt)
     
 #MAIN
     
