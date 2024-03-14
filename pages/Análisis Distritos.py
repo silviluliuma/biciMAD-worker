@@ -66,6 +66,14 @@ db_params = {
     "port": 5432  # El puerto predeterminado para PostgreSQL es 5432
 }
 
+district_dict = {
+    '01': 'Centro', '02': 'Arganzuela', '03': 'Retiro', '04': 'Salamanca', '05': 'Chamartín',
+    '06': 'Tetuán', '07': 'Chamberí', '08': 'Fuencarral-El Pardo', '09': 'Moncloa-Aravaca',
+    '10': 'Latina', '11': 'Carabanchel', '12': 'Usera', '13': 'Puente de Vallecas',
+    '14': 'Moratalaz', '15': 'Ciudad Lineal', '16': 'Hortaleza', '17': 'Villaverde',
+    '18': 'Villa de Vallecas', '19': 'Vicálvaro', '20': 'San Blas-Canillejas', '21': 'Barajas'
+}
+
 def stations_per_district():
     conn = psycopg2.connect(**db_params)
     cursor = conn.cursor()
@@ -76,13 +84,15 @@ def stations_per_district():
     FROM
         estaciones
     GROUP BY
-        code_district;"""
+        code_district
+    ORDER BY num_stations;"""
     
     cursor.execute(query)
     results = cursor.fetchall()
+    results_mapped = [(district_dict[code], num_stations) for code, num_stations in results]
     cursor.close()
     conn.close()
-    df = pd.DataFrame(results, columns=['Distrito', 'Número de estaciones'])
+    df = pd.DataFrame(results_mapped, columns=['Distrito', 'Número de estaciones'])
 
     st.write("Número de Estaciones por Distrito")
     plt.figure(figsize=(10, 6))
@@ -136,10 +146,11 @@ def get_districts(light, period):
 
     cursor.execute(query)
     results = cursor.fetchall()
+    results_mapped = [(district_dict[code], num_stations) for code, num_stations in results]
     cursor.close()
     conn.close()
-    districts = [result[0] for result in results]
-    light_counts = [result[3] for result in results]
+    districts = [result[0] for result in results_mapped]
+    light_counts = [result[3] for result in results_mapped]
     plt.figure(figsize=(10, 6))
     plt.bar(districts, light_counts, color='skyblue')
     plt.xlabel('Distrito')
