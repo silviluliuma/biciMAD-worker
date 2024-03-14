@@ -163,6 +163,7 @@ def get_districts(light, period):
 if __name__ == "__main__":
     if st.sidebar.button("Actualizar datos"):
         st.session_state.heatmap = get_stations()
+    st.title("¿Cuántas estaciones hay actualmente por distrito?")
     stations_per_district()
     select_box_query = st.sidebar.selectbox("Seleccione el gráfico que desea visualizar", ["Estaciones con falta de bicicletas", "Estaciones con exceso de bicicletas", "Estaciones con un nivel adecuado de bicicletas"], index=0)
     select_box_period = st.sidebar.selectbox("Seleccione el período a analizar", ["1 Día", "2 Días", "Semana", "Histórico"])
@@ -179,4 +180,5 @@ if __name__ == "__main__":
     else:
         light = 2
     period_hours = period_mapping[select_box_period]
+    st.title("¿Cuál es la situación de esas estaciones?")
     get_districts(light, period_hours)
