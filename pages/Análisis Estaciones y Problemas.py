@@ -124,9 +124,9 @@ def reservation_count():
 
 if __name__ == "__main__":
     selectbox_station = st.sidebar.selectbox("Selecciona una estación", list(address_id_dict.keys()))
-    st.write("Datos sobre la estación seleccionada:")
+    st.title("Datos sobre la estación seleccionada:")
     st.write(analysis_station(selectbox_station))
-    st.title("Problemas detectados gracias al análisis de los datos:")
+    st.title("Posibles problemas detectados gracias al análisis de los datos:")
     st.write("Estaciones no disponibles:")
     st.write(no_available())
     st.write("Los usuarios no reservan bicicletas (o si lo hacen, no se está recogiendo adecuadamente)")
