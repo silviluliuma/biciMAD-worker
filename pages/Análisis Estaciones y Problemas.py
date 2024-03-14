@@ -120,19 +120,9 @@ def reservation_count():
     df = pd.DataFrame(results, columns=['Veces que se ha realizado una reserva de bicicletas'])
     return df
 
-def page_config():
-     st.set_page_config(
-        page_title="Análisis de las estaciones",
-        page_icon=":bike:",
-        layout="wide",
-        initial_sidebar_state="expanded",
-        theme="light"
-    )
-
 # MAIN
 
 if __name__ == "__main__":
-    page_config()
     selectbox_station = st.sidebar.selectbox("Selecciona una estación", list(address_id_dict.keys()))
     st.write("Datos sobre la estación seleccionada:")
     st.write(analysis_station(selectbox_station))

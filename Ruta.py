@@ -173,16 +173,35 @@ def invert_coordinates(coordinates): #Invierte las coordenadas necesarias (openr
 #stations_streamlit["coordinates"] = stations_streamlit["coordinates"].apply(invert_coordinates)
 stations_streamlit.loc[:, "coordinates"] = stations_streamlit["coordinates"].apply(invert_coordinates)
 
-
 def get_problematic_stations():
     lights_df_sum = st.session_state.stations_real_time.pivot_table(index='code_district', columns='light', aggfunc='size', fill_value=0)
     lights_df_sum = lights_df_sum.drop([2, 3], axis=1)
-    lights_df_sum["problematic_stations"] = lights_df_sum[0] +lights_df_sum[1]
-    lights_df_sum_sorted = lights_df_sum.sort_values(by="problematic_stations", ascending=False)
+    lights_df_sum["Estaciones que necesitan revisión"] = lights_df_sum[0] +lights_df_sum[1]
+    lights_df_sum_sorted = lights_df_sum.sort_values(by="Estaciones que necesitan revisión", ascending=False)
     return lights_df_sum_sorted
+
+def get_heatmap():
+    district_dict = {
+    '01': 'Centro', '02': 'Arganzuela', '03': 'Retiro', '04': 'Salamanca', '05': 'Chamartín',
+    '06': 'Tetuán', '07': 'Chamberí', '08': 'Fuencarral-El Pardo', '09': 'Moncloa-Aravaca',
+    '10': 'Latina', '11': 'Carabanchel', '12': 'Usera', '13': 'Puente de Vallecas',
+    '14': 'Moratalaz', '15': 'Ciudad Lineal', '16': 'Hortaleza', '17': 'Villaverde',
+    '18': 'Villa de Vallecas', '19': 'Vicálvaro', '20': 'San Blas-Canillejas', '21': 'Barajas'
+}
+    problematic_stations = get_problematic_stations()
+    plt.figure(figsize=(10, 6))
+    sns.heatmap(get_problematic_stations(), cmap='Reds', annot=True, fmt='g', linewidths=.5)
+    labels = [f"{district_dict[code]} ({code})" for code in problematic_stations.index]
+    plt.yticks(ticks=range(len(problematic_stations.index)), labels=labels, rotation=0)
+    plt.title('Estaciones que necesitan revisión en cada distrito')
+    plt.xlabel('Luz')
+    plt.ylabel('Distrito')
+    st.pyplot()
 
 if __name__ == "__main__":
     st.sidebar.title("BiciMAD-worker")
+    st.title("Número de estaciones que necesitan ser revisadas en cada distrito:")
+    get_heatmap()
     st.title("Esta es la ruta recomendada para su distrito:")
     number_district_sidebar = st.sidebar.selectbox("Seleccione uno de los distritos con necesidad de redistribución", get_problematic_stations().index.tolist(), index=0)
     van_sidebar = st.sidebar.selectbox("¿Su furgoneta está vacía ('Empty') o llena ('Full')?", ["Empty", "Full"], index=0)
