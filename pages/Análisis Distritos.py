@@ -140,22 +140,23 @@ def get_districts(light, period):
     results = cursor.fetchall()
     cursor.close()
     conn.close()
-    df = pd.DataFrame(results, columns=['Distrito', f'Estaciones con luz {light}', 'Total de Estaciones', f'Ratio con luz {light}'])
+    districts = [result[0] for result in results]
+    light_counts = [result[3] for result in results]
     plt.figure(figsize=(10, 6))
-    plt.bar(df['Distrito'], df[f'Estaciones con luz {light}'], color='skyblue')
+    plt.bar(districts, light_counts, color='skyblue')
     plt.xlabel('Distrito')
     if light == 0:
         plt.ylabel('Estaciones con falta de bicicletas')
-        plt.title('Estaciones con falta de bicicletas según distrito de Madrid')
+        plt.title('Ratio de estaciones con falta de bicicletas según distrito de Madrid')
     elif light == 1:
         plt.ylabel('Estaciones con exceso de bicicletas')
-        plt.title('Estaciones con exceso de bicicletas según distrito de Madrid')
+        plt.title('Ratio de estaciones con exceso de bicicletas según distrito de Madrid')
     else:
         plt.ylabel('Estaciones con un número óptimo de bicicletas')
-        plt.title('Estaciones con un nivel adecuado de bicicletas según distrito de Madrid')
-    plt.xticks(rotation=45, ha='right')
+        plt.title('Ratio de estaciones con un nivel adecuado de bicicletas según distrito de Madrid')
+    plt.xticks(rotation=0, ha='right')
     plt.tight_layout()
-    st.pyplot(plt)
+    st.pyplot(plt) 
     
 #MAIN
     
