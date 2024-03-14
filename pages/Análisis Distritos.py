@@ -85,7 +85,6 @@ def stations_per_district():
     conn.close()
     df = pd.DataFrame(results, columns=['Distrito', 'Número de estaciones'])
 
-    st.write("Número de Estaciones por Distrito")
     plt.figure(figsize=(10, 6))
     plt.bar(df['Distrito'], df['Número de estaciones'], color='skyblue')
     plt.xlabel("Distrito")
