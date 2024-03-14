@@ -58,31 +58,6 @@ def get_stations(): #Usar el token para acceder a la información en tiempo real
 
 stations_real_time = get_stations()
 
-def get_problematic_stations():
-    lights_df_sum = stations_real_time.pivot_table(index='code_district', columns='light', aggfunc='size', fill_value=0)
-    lights_df_sum = lights_df_sum.drop([2, 3], axis=1)
-    lights_df_sum["Estaciones que necesitan revisión"] = lights_df_sum[0] +lights_df_sum[1]
-    lights_df_sum_sorted = lights_df_sum.sort_values(by="Estaciones que necesitan revisión", ascending=False)
-    return lights_df_sum_sorted
-
-def get_heatmap():
-    district_dict = {
-    '01': 'Centro', '02': 'Arganzuela', '03': 'Retiro', '04': 'Salamanca', '05': 'Chamartín',
-    '06': 'Tetuán', '07': 'Chamberí', '08': 'Fuencarral-El Pardo', '09': 'Moncloa-Aravaca',
-    '10': 'Latina', '11': 'Carabanchel', '12': 'Usera', '13': 'Puente de Vallecas',
-    '14': 'Moratalaz', '15': 'Ciudad Lineal', '16': 'Hortaleza', '17': 'Villaverde',
-    '18': 'Villa de Vallecas', '19': 'Vicálvaro', '20': 'San Blas-Canillejas', '21': 'Barajas'
-}
-    problematic_stations = get_problematic_stations()
-    plt.figure(figsize=(10, 6))
-    sns.heatmap(get_problematic_stations(), cmap='Reds', annot=True, fmt='g', linewidths=.5)
-    labels = [f"{district_dict[code]} ({code})" for code in problematic_stations.index]
-    plt.yticks(ticks=range(len(problematic_stations.index)), labels=labels, rotation=0)
-    plt.title('Estaciones que necesitan revisión en cada distrito')
-    plt.xlabel('Luz')
-    plt.ylabel('Distrito')
-    st.pyplot()
-
 db_params = {
     "dbname": "bicimad_worker",
     "user": st.secrets["google_cloud_user"],
@@ -91,6 +66,31 @@ db_params = {
     "port": 5432  # El puerto predeterminado para PostgreSQL es 5432
 }
 
+def stations_per_district():
+    conn = psycopg2.connect(**db_params)
+    cursor = conn.cursor()
+
+    query = """SELECT
+    code_district,
+    COUNT(*) AS num_stations
+    FROM
+        estaciones
+    GROUP BY
+        code_district;"""
+    
+    cursor.execute(query)
+    results = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    df = pd.DataFrame(results, columns=['Distrito', 'Número de estaciones'])
+
+    st.write("Número de Estaciones por Distrito")
+    plt.figure(figsize=(10, 6))
+    plt.bar(df['Distrito'], df['Número de estaciones'], color='skyblue')
+    plt.xlabel("Distrito")
+    plt.ylabel("Número de Estaciones")
+    plt.title("Número de Estaciones por Distrito")
+    st.pyplot(plt)
 
 def get_districts(light, period):
     conn = psycopg2.connect(**db_params)
@@ -145,13 +145,13 @@ def get_districts(light, period):
     plt.xlabel('Distrito')
     if light == 0:
         plt.ylabel('Estaciones con falta de bicicletas')
-        plt.title('Ratio de estaciones con falta de bicicletas según distrito de Madrid')
+        plt.title('Estaciones con falta de bicicletas según distrito de Madrid')
     elif light == 1:
         plt.ylabel('Estaciones con exceso de bicicletas')
-        plt.title('Ratio de estaciones con exceso de bicicletas según distrito de Madrid')
+        plt.title('Estaciones con exceso de bicicletas según distrito de Madrid')
     else:
         plt.ylabel('Estaciones con un número óptimo de bicicletas')
-        plt.title('Ratio de estaciones con un nivel adecuado de bicicletas según distrito de Madrid')
+        plt.title('Estaciones con un nivel adecuado de bicicletas según distrito de Madrid')
     plt.xticks(rotation=0, ha='right')
     plt.tight_layout()
     st.pyplot(plt) 
@@ -161,7 +161,7 @@ def get_districts(light, period):
 if __name__ == "__main__":
     if st.sidebar.button("Actualizar datos"):
         st.session_state.heatmap = get_stations()
-    heatmap = get_heatmap()
+    stations_per_district()
     select_box_query = st.sidebar.selectbox("Seleccione el gráfico que desea visualizar", ["Estaciones con falta de bicicletas", "Estaciones con exceso de bicicletas", "Estaciones con un nivel adecuado de bicicletas"], index=0)
     select_box_period = st.sidebar.selectbox("Seleccione el período a analizar", ["1 Día", "2 Días", "Semana", "Histórico"])
     period_mapping = {
