@@ -5,9 +5,6 @@
 
 biciMAD-worker provides optimized routes between high and low-populated BiciMAD stations to address one of the platform's biggest challenges: the **redistribution** of bikes among various stations. It also captures real-time data in a Google Cloud SQL database, enabling the extraction of queries for analyzing station statuses and identifying potential issues.
 
-![Captura de pantalla 2023-11-22 a las 16 35 55](https://github.com/silviluliuma/ih_datamadpt0923_project_m1/assets/138609959/4add47cd-53ff-4b07-9463-e03914177fd5)
-
-
 ## **Status**
 
 biciMAD-worker is my python based final project for the Ironhack Data Analysis Bootcamp (Madrid 2023-2024)
@@ -27,6 +24,9 @@ The graphical interface built with **Streamlit** enables workers to visualize a 
 You can use the code of biciMAD-worker, as long as you give **autorship credits**. 
 
 Please, clone this GitHub repository to your local machine.
+
+![Captura de Pantalla 2024-03-14 a las 19 44 57](https://github.com/silviluliuma/biciMAD-worker/assets/138609959/e5d91d56-6646-4093-8d9e-dc6312ff5c2a)
+
 
 ## **Inspiration**
 
