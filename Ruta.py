@@ -25,7 +25,7 @@ def get_token(): #Coger el token de la api de bicimad
     return response.content
 
 def get_stations(): #Usar el token para acceder a la información en tiempo real sobre las estaciones
-    #token = st.secrets["access_token"]
+    token = st.secrets["access_token"]
     url = "https://openapi.emtmadrid.es/v3/transport/bicimad/stations/"
     headers = {"accessToken" : token}
     response = requests.get(url, headers = headers)
@@ -188,4 +188,3 @@ if __name__ == "__main__":
     van_sidebar = st.sidebar.selectbox("¿Su furgoneta está vacía ('Empty') o llena ('Full')?", ["Empty", "Full"], index=0)
     route_map = get_route_map_google(st.session_state.client, st.session_state.stations_real_time, number_district_sidebar, van_sidebar)
     st_data = folium_static(route_map)
-    
