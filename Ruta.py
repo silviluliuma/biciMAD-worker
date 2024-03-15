@@ -26,7 +26,7 @@ def get_token(): #Coger el token de la api de bicimad
     response = requests.get(url, headers=headers)
     return response.content
 
-def get_stations(): #Usar el token para acceder a la información en tiempo real sobre las estaciones
+#def get_stations(): #Usar el token para acceder a la información en tiempo real sobre las estaciones
     #token = st.secrets["access_token"]
     url = "https://openapi.emtmadrid.es/v3/transport/bicimad/stations/"
     headers = {"accessToken" : token}
