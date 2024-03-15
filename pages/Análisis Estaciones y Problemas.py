@@ -129,5 +129,5 @@ if __name__ == "__main__":
     st.title("Posibles problemas detectados gracias al análisis de los datos:")
     st.write("Estaciones no disponibles:")
     st.write(no_available())
-    st.write("Los usuarios no reservan bicicletas (o si lo hacen, no se está recogiendo adecuadamente)")
+    st.write("Los usuarios no reservan bicicletas (o, si lo hacen, no se está recogiendo adecuadamente)")
     st.write(reservation_count())
