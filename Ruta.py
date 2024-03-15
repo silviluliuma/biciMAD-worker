@@ -68,7 +68,7 @@ def find_nearest_to_coords(df, coords): #Calcula la estación más cercana a la 
     nearest_station = min(station_coordinates, key=lambda coord: great_circle(coord, coords).meters)
     return nearest_station
 
-def create_route(client, start_coords, end_coords): #Crea una ruta entre las estaciones con openrouteservice
+#def create_route(client, start_coords, end_coords): #Crea una ruta entre las estaciones con openrouteservice
     return client.directions(
         coordinates=[start_coords, end_coords],
         profile='driving-car',
@@ -97,10 +97,10 @@ def get_user_loc(loc):
         user_longitude = loc["coords"].get("longitude")
     return [user_latitude, user_longitude]
 
-if "client" not in st.session_state:
+#if "client" not in st.session_state:
     st.session_state.client = ors.Client(key=st.secrets["openroute_api_key"])
 
-def get_route_map_google(client, stations_real_time, number_district_sidebar, van_sidebar): #Hace display de la ruta del trabajador tanto en google maps como en un mapa folium
+#def get_route_map_google(client, stations_real_time, number_district_sidebar, van_sidebar): #Hace display de la ruta del trabajador tanto en google maps como en un mapa folium
     vehicle_start = get_user_loc(loc)[1], get_user_loc(loc)[0]
     m = folium.Map(location=[vehicle_start[1], vehicle_start[0]], zoom_start=12)
     folium.Marker(location=[vehicle_start[1], vehicle_start[0]], popup='INICIO DE LA RUTA', icon=folium.Icon(color='purple')).add_to(m)
